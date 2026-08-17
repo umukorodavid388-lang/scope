@@ -1,0 +1,23 @@
+{% extends 'dashboard/frame.html' %}
+
+{% block app_content %}
+<div class="page-head">
+    <div><h2>Revision Requests</h2><p>Every change request, timestamped and tracked.</p></div>
+</div>
+
+<div class="glass-card">
+    <h3 class="mb-4">Revision History</h3>
+    <div class="timeline">
+        {% for r in revisions %}
+        <div class="timeline-item {{ r.status|lower }}">
+            <h6>Revision #{{ r.number }} · {{ r.project.name }}</h6>
+            <div class="muted small">{{ r.project.client.name }} · {{ r.created_at|date:"d M Y H:i" }}</div>
+            <p class="mt-1 mb-2">{{ r.description }}</p>
+            <span class="status-badge status-{{ r.status_badge_slug }}">{{ r.status }}</span>
+        </div>
+        {% empty %}
+        <p class="muted">No revision requests yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

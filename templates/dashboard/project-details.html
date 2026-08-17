@@ -1,0 +1,420 @@
+{% extends 'dashboard/frame.html' %}
+{% block title %} Details Project {% endblock %}
+{% block app_content %}
+<main class="app-content">
+
+  <div class="page-head">
+    <div>
+      <h2>Booking #{{ booking.pk|stringformat:"05d" }}</h2>
+      <p>Submitted {{ booking.created_at|date:"d M Y, g:i A" }}</p>
+    </div>
+    <div class="page-actions">
+      <a href="{% url 'booking_list' %}" class="btn btn-outline-soft"><i class="bi bi-arrow-left me-2"></i>Back to list</a>
+    </div>
+  </div>
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% else %}alert-danger{% endif %} py-2 small">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <!-- STATUS + ACTIONS -->
+<div class="glass-card mb-3">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+        <!-- STATUS -->
+        <div class="d-flex align-items-center gap-3">
+
+            <span class="muted small">
+                Current Status
+            </span>
+
+            {% if booking.status == "approved" %}
+
+                <span class="status-badge status-Completed">
+                    {{ booking.get_status_display }}
+                </span>
+
+            {% elif booking.status == "rejected" %}
+
+                <span class="status-badge status-Overdue">
+                    {{ booking.get_status_display }}
+                </span>
+
+            {% elif booking.status == "proposal_sent" %}
+
+                <span class="status-badge status-InProgress">
+                    Proposal Sent
+                </span>
+
+            {% elif booking.status == "client_approved" %}
+
+                <span class="status-badge status-Completed">
+                    Client Approved
+                </span>
+
+            {% else %}
+
+                <span class="status-badge status-Planning">
+                    {{ booking.get_status_display }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+        {% if booking.status == "pending" %}
+
+        <form method="POST" class="d-flex gap-2">
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                name="action"
+                value="approve"
+                class="btn btn-success">
+
+                <i class="bi bi-check-circle me-2"></i>
+                Approve Booking
+
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-danger"
+                data-bs-toggle="modal"
+                data-bs-target="#rejectModal">
+
+                <i class="bi bi-x-circle me-2"></i>
+                Reject Booking
+
+            </button>
+
+        </form>
+
+        {% elif booking.status == "approved" %}
+
+        <a
+            href="{% url 'videographer_proposal_form' booking.pk %}"
+            class="btn btn-primary">
+
+            <i class="bi bi-file-earmark-text me-2"></i>
+
+            Create Proposal
+
+        </a>
+
+        {% elif booking.status == "proposal_sent" %}
+
+        <button class="btn btn-warning" disabled>
+
+            <i class="bi bi-envelope-check me-2"></i>
+
+            Waiting for Client Approval
+
+        </button>
+
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+
+<!-- Reject Modal -->
+<div
+    class="modal fade"
+    id="rejectModal"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="reject">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+
+                        Reject Booking
+
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <p class="text-muted">
+
+                        Please provide a reason for rejecting this booking.
+
+                    </p>
+
+                    <textarea
+                        name="reason"
+                        rows="5"
+                        class="form-control"
+                        placeholder="Example: We are fully booked for the requested date."
+                        required></textarea>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger">
+
+                        <i class="bi bi-x-circle me-2"></i>
+
+                        Reject Booking
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+  <!-- CLIENT INFORMATION -->
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Client Information</h3>
+    <div class="scope-info">
+      <div class="scope-info-item">
+        <div class="label">Full Name</div>
+        <div class="value">{{ booking.full_name }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Email</div>
+        <div class="value">{{ booking.email }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Phone</div>
+        <div class="value">{{ booking.phone_number }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Company</div>
+        <div class="value">{{ booking.company|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Project Type</div>
+        <div class="value">{{ booking.project_type }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT DETAILS -->
+  {% if booking.project_description %}
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Project Details</h3>
+    <p class="text-soft mb-0" style="white-space:pre-wrap;">{{ booking.project_description }}</p>
+  </div>
+  {% endif %}
+
+  <!-- COVERAGE -->
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Coverage Requirements</h3>
+    <div class="scope-info">
+      <div class="scope-info-item">
+        <div class="label">Coverage Type</div>
+        <div class="value">{{ booking.coverage_type|default:"—" }}</div>
+      </div>
+    </div>
+
+    {% if booking.coverage_type == 'highlight' %}
+    <ul class="deliverable-list mt-3">
+      {% if booking.coverage_ceremony %}<li><i class="bi bi-check-circle"></i>Ceremony</li>{% endif %}
+      {% if booking.coverage_speeches %}<li><i class="bi bi-check-circle"></i>Speeches</li>{% endif %}
+      {% if booking.coverage_performances %}<li><i class="bi bi-check-circle"></i>Performances</li>{% endif %}
+      {% if booking.coverage_interviews %}<li><i class="bi bi-check-circle"></i>Interviews</li>{% endif %}
+      {% if booking.coverage_product_shots %}<li><i class="bi bi-check-circle"></i>Product shots</li>{% endif %}
+      {% if booking.coverage_drone_footage %}<li><i class="bi bi-check-circle"></i>Drone footage</li>{% endif %}
+      {% if booking.coverage_behind_the_scenes %}<li><i class="bi bi-check-circle"></i>Behind the scenes</li>{% endif %}
+      {% if booking.coverage_guest_reactions %}<li><i class="bi bi-check-circle"></i>Guest reactions</li>{% endif %}
+      {% if booking.coverage_decoration %}<li><i class="bi bi-check-circle"></i>Decoration</li>{% endif %}
+      {% if booking.coverage_social_media_content %}<li><i class="bi bi-check-circle"></i>Social media content</li>{% endif %}
+      {% if booking.coverage_highlight_moments %}<li><i class="bi bi-check-circle"></i>Highlight moments</li>{% endif %}
+      {% if booking.coverage_other %}<li><i class="bi bi-check-circle"></i>Other</li>{% endif %}
+    </ul>
+    {% endif %}
+
+    {% if booking.special_requests %}
+    <p class="text-soft small mt-3 mb-0"><strong class="text-light">Special requests:</strong> {{ booking.special_requests }}</p>
+    {% endif %}
+  </div>
+
+  <!-- SCHEDULE & VENUE -->
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Schedule &amp; Venue</h3>
+    <div class="scope-info">
+      <div class="scope-info-item">
+        <div class="label">Event Date</div>
+        <div class="value">{{ booking.event_date|date:"d M Y" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Start Time</div>
+        <div class="value">{{ booking.start_time|time:"g:i A" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">End Time</div>
+        <div class="value">{{ booking.end_time|time:"g:i A"|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Coverage Hours</div>
+        <div class="value">{{ booking.coverage_hours|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Venue</div>
+        <div class="value">{{ booking.venue_name }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Address</div>
+        <div class="value">{{ booking.venue_address }}{% if booking.city %}, {{ booking.city }}{% endif %}{% if booking.state %}, {{ booking.state }}{% endif %}{% if booking.country %}, {{ booking.country }}{% endif %}</div>
+      </div>
+    </div>
+    {% if booking.maps_link %}
+    <a href="{{ booking.maps_link }}" target="_blank" rel="noopener" class="btn btn-outline-soft mt-3">
+      <i class="bi bi-geo-alt me-2"></i>Open in Maps
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- DELIVERABLES -->
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Deliverables</h3>
+    <ul class="deliverable-list mb-3">
+      {% if booking.deliverable_highlight_video %}<li><i class="bi bi-check-circle"></i>Highlight video</li>{% endif %}
+      {% if booking.deliverable_full_event_video %}<li><i class="bi bi-check-circle"></i>Full event video</li>{% endif %}
+      {% if booking.deliverable_social_reels %}<li><i class="bi bi-check-circle"></i>Social media reels</li>{% endif %}
+      {% if booking.deliverable_youtube_version %}<li><i class="bi bi-check-circle"></i>YouTube version</li>{% endif %}
+      {% if booking.deliverable_short_documentary %}<li><i class="bi bi-check-circle"></i>Short documentary</li>{% endif %}
+      {% if booking.deliverable_raw_footage %}<li><i class="bi bi-check-circle"></i>Raw footage</li>{% endif %}
+      {% if booking.deliverable_edited_photos %}<li><i class="bi bi-check-circle"></i>Edited photos</li>{% endif %}
+      {% if booking.deliverable_promo_trailer %}<li><i class="bi bi-check-circle"></i>Promotional trailer</li>{% endif %}
+    </ul>
+    <div class="scope-info">
+      <div class="scope-info-item">
+        <div class="label">Final Length</div>
+        <div class="value">{{ booking.final_length|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Deadline</div>
+        <div class="value">{{ booking.deadline|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Delivery Method</div>
+        <div class="value">{{ booking.delivery_method|default:"—" }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUDGET & PAYMENT -->
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Budget &amp; Payment</h3>
+    <div class="scope-info">
+      <div class="scope-info-item">
+        <div class="label">Budget</div>
+        <div class="value">{{ booking.budget|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Deposit</div>
+        <div class="value">{{ booking.deposit|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Payment Method</div>
+        <div class="value">{{ booking.payment_method|default:"—" }}</div>
+      </div>
+      <div class="scope-info-item">
+        <div class="label">Revision Rounds</div>
+        <div class="value">{{ booking.revision_round|default:"—" }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADDITIONAL SERVICES -->
+  {% if booking.drone_coverage or booking.livestream or booking.extra_camera_operator or booking.photography or booking.same_day_edit or booking.teleprompter or booking.lighting_setup or booking.audio_recording or booking.subtitle_captions or booking.motion_graphics %}
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Additional Services</h3>
+    <ul class="deliverable-list mb-0">
+      {% if booking.drone_coverage %}<li><i class="bi bi-check-circle"></i>Drone coverage</li>{% endif %}
+      {% if booking.livestream %}<li><i class="bi bi-check-circle"></i>Livestream</li>{% endif %}
+      {% if booking.extra_camera_operator %}<li><i class="bi bi-check-circle"></i>Extra camera operator</li>{% endif %}
+      {% if booking.photography %}<li><i class="bi bi-check-circle"></i>Photography</li>{% endif %}
+      {% if booking.same_day_edit %}<li><i class="bi bi-check-circle"></i>Same-day edit</li>{% endif %}
+      {% if booking.teleprompter %}<li><i class="bi bi-check-circle"></i>Teleprompter</li>{% endif %}
+      {% if booking.lighting_setup %}<li><i class="bi bi-check-circle"></i>Lighting setup</li>{% endif %}
+      {% if booking.audio_recording %}<li><i class="bi bi-check-circle"></i>Audio recording</li>{% endif %}
+      {% if booking.subtitle_captions %}<li><i class="bi bi-check-circle"></i>Subtitle captions</li>{% endif %}
+      {% if booking.motion_graphics %}<li><i class="bi bi-check-circle"></i>Motion graphics</li>{% endif %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <!-- ADDITIONAL NOTES -->
+  {% if booking.additional_notes %}
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Additional Notes</h3>
+    <p class="text-soft mb-0" style="white-space:pre-wrap;">{{ booking.additional_notes }}</p>
+  </div>
+  {% endif %}
+
+  <!-- TERMS CONFIRMED -->
+  <div class="glass-card mb-3">
+    <h3 style="font-size:1.05rem;">Terms Confirmed by Client</h3>
+    <ul class="deliverable-list mb-0">
+      <li>
+        <i class="bi {% if booking.confirm_information %}bi-check-circle{% else %}bi-x-circle text-danger{% endif %}"></i>
+        Information provided is accurate
+      </li>
+      <li>
+        <i class="bi {% if booking.agree_booking_policy %}bi-check-circle{% else %}bi-x-circle text-danger{% endif %}"></i>
+        Agreed to booking terms and cancellation policy
+      </li>
+      <li>
+        <i class="bi {% if booking.confirm_deposit_policy %}bi-check-circle{% else %}bi-x-circle text-danger{% endif %}"></i>
+        Understands booking is confirmed only after deposit received
+      </li>
+    </ul>
+  </div>
+
+</main>
+{% endblock %}

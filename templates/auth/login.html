@@ -1,0 +1,60 @@
+{% extends 'auth/base.html' %}
+{% block title %}Log In{% endblock %}
+
+{% block content %}
+<div id="auth" class="auth-wrap">
+    <div class="auth-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="grid-overlay"></div>
+    </div>
+    <div class="auth-card glass-card">
+        <div class="text-center mb-4">
+            <a class="navbar-brand justify-content-center" href="{% url 'landing' %}">
+                <span class="brand-mark"><i class="bi bi-camera-reels"></i></span>
+                <span class="brand-name">Scope Agreement</span>
+            </a>
+        </div>
+
+        <h2 class="auth-title">Welcome back</h2>
+        <p class="muted text-center mb-4">Log in to manage your scopes and revisions.</p>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger py-2 small">
+            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            <div class="col-12">
+                <div class="form-floating">
+                    {{ form.username }}
+                    <label for="{{ form.username.id_for_label }}">Username</label>
+                </div>
+                {% if form.username.errors %}
+                <div class="small text-danger mt-1">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    {{ form.password }}
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                </div>
+                {% if form.password.errors %}
+                <div class="small text-danger mt-1">{{ form.password.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                    {{ form.remember }}
+                    <label class="form-check-label small" for="{{ form.remember.id_for_label }}">Remember me</label>
+                </div>
+                <a href="#" class="small">Forgot password?</a>
+            </div>
+            <div class="col-12"><button class="btn btn-primary-soft w-100" type="submit">Log In</button></div>
+        </form>
+        <p class="text-center mt-3 small">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+    </div>
+</div>
+{% endblock %}

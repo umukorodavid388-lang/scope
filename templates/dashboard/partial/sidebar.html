@@ -1,0 +1,52 @@
+{% load static %}
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+        <a href="{% url 'dashboard_overview' %}" class="navbar-brand">
+            <span class="brand-mark"><i class="bi bi-camera-reels"></i></span>
+            <span class="brand-name">Scope Agreement</span>
+        </a>
+        <button class="btn btn-icon-only d-lg-none" id="sidebarClose" aria-label="Close sidebar"><i
+                class="bi bi-x-lg"></i></button>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a href="{% url 'dashboard_overview' %}" class="{% if request.resolver_match.url_name == 'dashboard_overview' %}active{% endif %}">
+            <i class="bi bi-grid-1x2"></i> Dashboard
+        </a>
+        <a href="{% url 'booking_list' %}" class="{% if request.resolver_match.url_name == 'booking_list' %}active{% endif %}">
+            <i class="bi bi-folder"></i> Projects
+        </a>
+        <a href="{% url 'client_list' %}" class="{% if request.resolver_match.url_name == 'client_list' %}active{% endif %}">
+            <i class="bi bi-people"></i> Clients
+        </a>
+        <a href="#">
+            <i class="bi bi-person-badge"></i> Completed Tasks
+        </a>
+        <a href="{% url 'task_list' %}" class="{% if request.resolver_match.url_name == 'task_list' or request.resolver_match.url_name == 'task_detail' %}active{% endif %}">
+            <i class="bi bi-list-task"></i> Task
+        </a>
+        <a href="{% url 'dashboard_list' %}" class="{% if request.resolver_match.url_name == 'dashboard_list' or request.resolver_match.url_name == 'dashboard_upload' %}active{% endif %}">
+            <i class="bi bi-collection-play"></i> Media Library
+        </a>
+        <a href="{% url 'analytics' %}" class="{% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">
+            <i class="bi bi-graph-up"></i> Analytics
+        </a>
+        <a href="{% url 'calender' %}"
+            class="{% if request.resolver_match.url_name == 'calender' %}active{% endif %}">
+            <i class="bi bi-calendar3"></i> Calendar
+        </a>
+        <a href="{% url 'upcoming_projects' %}"
+            class="{% if request.resolver_match.url_name == 'upcoming_projects' %}active{% endif %}">
+            <i class="bi bi-calendar3"></i> Upcoming Projects
+        </a>
+        <a href="{% url 'profile' %}"
+            class="{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
+            <i class="bi bi-gear"></i> Settings
+        </a>
+    </nav>
+
+    <div class="sidebar-foot">
+        <a href="{% url 'logout' %}" class="btn btn-ghost w-100"><i class="bi bi-box-arrow-left"></i> Logout</a>
+    </div>
+</aside>

@@ -1,0 +1,121 @@
+{% extends 'dashboard/frame.html' %}
+{% load static %}
+{% block title %} Overview {% endblock %}
+{% block app_content %}
+<div class="page-head">
+    <div>
+        <h2>Dashboard</h2>
+        <p>Welcome back, {{ request.user.username }}. Here's your studio at a glance.</p>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="glass-card stat-card fade-in visible delay-1">
+            <div class="stat-icon bg-primary-soft"><i class="bi bi-folder-check"></i></div>
+            <div class="stat-label">Projects Completed</div>
+            <div class="stat-value">{{ projects_completed_count|default:0 }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="glass-card stat-card accent-success fade-in visible delay-2">
+            <div class="stat-icon bg-success-soft"><i class="bi bi-people"></i></div>
+            <div class="stat-label">Active Clients</div>
+            <div class="stat-value">{{ active_client_count|default:0 }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="glass-card stat-card accent-info fade-in visible delay-3">
+            <div class="stat-icon bg-info-soft"><i class="bi bi-star"></i></div>
+            <div class="stat-label">Client Rating</div>
+            <div class="stat-value">{{ client_rating|default:"—" }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="glass-card stat-card accent-warning fade-in visible delay-4">
+            <div class="stat-icon bg-warning-soft"><i class="bi bi-clock-history"></i></div>
+            <div class="stat-label">Avg. Response Time</div>
+            <div class="stat-value">{{ avg_response_time|default:"—" }}</div>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mb-2">
+    {% for c in stat_cards %}
+    <div class="col-sm-6 col-xl-3">
+        <div class="glass-card stat-card accent-{{ c.accent }}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="stat-icon bg-{{ c.accent }}-soft"><i class="bi {{ c.icon }}"></i></div>
+            </div>
+            <div class="stat-label">{{ c.label }}</div>
+            <div class="stat-value">{{ c.value }}</div>
+            <div class="stat-trend {% if c.up %}up{% else %}down{% endif %}">
+                <i class="bi {% if c.up %}bi-arrow-up-right{% else %}bi-arrow-down-right{% endif %}"></i> {{ c.trend }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-12">
+        <div class="glass-card chart-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3>Monthly Projects</h3><span class="muted">Project volume over the last 7 months</span>
+                </div>
+                <span class="badge bg-primary-soft"><i class="bi bi-graph-up"></i> Trending up</span>
+            </div>
+            <div class="chart-wrap"><canvas id="chartMonthly"></canvas></div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="glass-card chart-card">
+            <h3>Revenue Analytics</h3><span class="muted">Project revenue + extra revision income (₦M)</span>
+            <div class="chart-wrap"><canvas id="chartRevenue"></canvas></div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="glass-card">
+            <h3 class="mb-3">Upcoming Deadlines</h3>
+            {% for p in upcoming %}
+            <div class="deadline-card glass-card mb-3" style="padding:1.1rem">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold">{{ p.name }}</div>
+                        <div class="muted small">{{ p.client.name }} · {{ p.deadline|date:"d M Y" }}</div>
+                    </div>
+                    <div class="text-end">
+                        <div
+                            class="countdown {% if p.days_until_deadline < 0 %}danger{% elif p.days_until_deadline <= 5 %}warn{% endif %}">
+                            {% if p.days_until_deadline < 0 %}{{ p.days_until_deadline|slice:"1:" }}d overdue{% else
+                                %}{{ p.days_until_deadline }}d left{% endif %} </div>
+                                <span class="status-badge status-{{ p.status_slug }}">{{ p.status }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div class="mini-progress">
+                            <div style="width:{{ p.completion }}%"></div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        {% with url=p.get_client_scope_url %}
+                        {% if url %}<a href="{{ url }}" target="_blank"><i class="bi bi-eye"></i> View</a>{% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="muted">Nothing due soon.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script id="chart-monthly-data" type="application/json">{{ chart_monthly|safe }}</script>
+    <script id="chart-revisions-data" type="application/json">{{ chart_revisions|safe }}</script>
+    <script id="chart-revenue-data" type="application/json">{{ chart_revenue|safe }}</script>
+    <script>
+        window.chartMonthlyData = JSON.parse(document.getElementById('chart-monthly-data').textContent);
+        window.chartRevisionsData = JSON.parse(document.getElementById('chart-revisions-data').textContent);
+        window.chartRevenueData = JSON.parse(document.getElementById('chart-revenue-data').textContent);
+    </script>
+    {% endblock %}
+
+

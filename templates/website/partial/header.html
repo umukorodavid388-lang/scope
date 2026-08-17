@@ -1,0 +1,32 @@
+<!-- Navigation -->
+<nav id="landingNav" class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#landing">
+            <span class="brand-mark"><i class="bi bi-camera-reels"></i></span>
+            <span class="brand-name">Accord</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                <li class="nav-item"><a class="nav-link" href="{% url 'media_library:landing' %}#landing">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'media_library:landing' %}#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'media_library:landing' %}#services">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'media_library:landing' %}#contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'media_library:gallery' %}">Gallery</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn btn-primary-soft btn-sm" href="{% url 'media_library:booking_request' %}">
+                        <i class="bi bi-calendar-check"></i> Request Booking
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-icon-only" id="navThemeToggle" aria-label="Toggle theme">
+                        <i class="bi bi-moon-stars"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

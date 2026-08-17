@@ -1,0 +1,40 @@
+/* ---------- Booking form sections ---------- */
+.scope-section {
+  background: var(--surface-2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.5rem 1.3rem;
+  margin-bottom: 1.25rem;
+}
+.scope-section-head { display: flex; align-items: center; gap: 12px; margin-bottom: 0.2rem; }
+.scope-section-head .step-icon {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 1.05rem;
+  background: var(--primary-soft); color: var(--accent);
+}
+.scope-section-head h3 { font-size: 1.02rem; margin: 0; }
+.scope-section-desc { font-size: 0.85rem; color: var(--muted); margin: 0 0 1.1rem 50px; }
+
+/* Chip-style toggle checkboxes */
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+.chip-check label {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--glass-border); background: var(--surface);
+  color: var(--text-soft); font-size: 0.85rem; font-weight: 500;
+  cursor: pointer; transition: all var(--transition);
+}
+.chip-check label:hover { border-color: var(--primary-soft); }
+.chip-check input:checked + label {
+  background: var(--primary-soft); border-color: var(--primary); color: var(--accent);
+}
+
+/* Step tracker */
+.booking-steps { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.6rem; }
+.booking-steps span {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; font-weight: 600; color: var(--muted);
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--surface);
+}
+.booking-steps span i { color: var(--accent); font-size: 0.9rem; }

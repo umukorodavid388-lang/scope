@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Received</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0F172A; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0F172A; padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px; background-color:#1E293B; border-radius:16px; border:1px solid rgba(148,163,184,0.15); overflow:hidden;">
+
+          <!-- Brand header -->
+          <tr>
+            <td style="padding:28px 32px 16px 32px; text-align:center;">
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                <tr>
+                  <td style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#2563EB,#38BDF8); text-align:center; vertical-align:middle; font-size:16px; color:#ffffff;">
+                    &#127909;
+                  </td>
+                  <td style="padding-left:10px; font-size:16px; font-weight:700; color:#F8FAFC;">
+                    Scope Agreement
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Success icon -->
+          <tr>
+            <td align="center" style="padding:8px 32px 0 32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="width:64px; height:64px; border-radius:50%; background-color:rgba(34,197,94,0.15); text-align:center; vertical-align:middle; font-size:28px; color:#22C55E;">
+                    &#10003;
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 32px 4px 32px; text-align:center;">
+              <h1 style="margin:0; font-size:20px; font-weight:700; color:#F8FAFC;">Booking request received</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 32px 24px 32px; text-align:center; font-size:14px; line-height:1.6; color:#CBD5E1;">
+              Hi {{ booking.full_name }}, we've got your request for
+              <strong style="color:#F8FAFC;">{{ booking.get_project_type_display }}</strong> coverage on
+              <strong style="color:#F8FAFC;">{{ booking.event_date|date:"F j, Y" }}</strong>.
+              We'll review the details and reach out within 24 hours.
+            </td>
+          </tr>
+
+          <!-- Details card -->
+          <tr>
+            <td style="padding:0 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:rgba(51,65,85,0.6); border:1px solid rgba(148,163,184,0.12); border-radius:12px;">
+                <tr>
+                  <td style="padding:16px 20px; font-size:13px; color:#94A3B8;">Reference</td>
+                  <td style="padding:16px 20px; font-size:13px; color:#F8FAFC; font-weight:600; text-align:right;">#{{ booking.pk|stringformat:"05d" }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="border-top:1px solid rgba(148,163,184,0.12);"></td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 20px; font-size:13px; color:#94A3B8;">Event date</td>
+                  <td style="padding:16px 20px; font-size:13px; color:#F8FAFC; font-weight:600; text-align:right;">{{ booking.event_date|date:"M j, Y" }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="border-top:1px solid rgba(148,163,184,0.12);"></td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 20px; font-size:13px; color:#94A3B8;">Venue</td>
+                  <td style="padding:16px 20px; font-size:13px; color:#F8FAFC; font-weight:600; text-align:right;">{{ booking.venue_name|default:"—" }}</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="border-top:1px solid rgba(148,163,184,0.12);"></td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 20px; font-size:13px; color:#94A3B8;">Status</td>
+                  <td style="padding:16px 20px; font-size:13px; text-align:right;">
+                    <span style="background-color:rgba(37,99,235,0.18); color:#38BDF8; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600;">
+                      {{ booking.get_status_display }}
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 4px 32px; font-size:13px; line-height:1.6; color:#94A3B8;">
+              Your booking is confirmed once the required deposit has been received. If anything above looks wrong, just reply to this email.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:24px 32px 32px 32px; text-align:center;">
+              <span style="font-size:12px; color:#64748B;">Scope Agreement · This is an automated message</span>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

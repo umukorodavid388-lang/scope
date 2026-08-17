@@ -1,0 +1,162 @@
+{% extends "auth/base.html" %}
+{% block title %} Approved Proposal {% endblock %}
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+
+                        <div class="mb-3">
+                            <i class="bi bi-file-earmark-check fs-1 text-primary"></i>
+                        </div>
+
+                        <h2 class="fw-bold">
+                            Your Project Proposal
+                        </h2>
+
+                        <p class="text-muted">
+                            Please review the proposal below before approving.
+                        </p>
+
+                    </div>
+
+
+                    <!-- PROJECT -->
+                    <div class="mb-4">
+
+                        <h5 class="fw-bold">
+                           {{ booking.project_type }}
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Event Date: {{ booking.event_date }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- PRICE -->
+                    <div class="bg-light rounded-3 p-4 mb-4">
+
+                        <small class="text-dark">
+                            Total Project Cost
+                        </small>
+
+                        <h2 class="fw-bold mb-0 text-dark">
+                            ₦{{ booking.proposed_price|floatformat:0 }}
+                        </h2>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Proposal
+                        </h6>
+
+                        <p class="text-muted">
+                            {{ booking.proposal_description }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- DELIVERABLES -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Deliverables
+                        </h6>
+
+                        <div class="bg-light text-dark rounded-3 p-3">
+                            {{ booking.deliverables|linebreaks }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- TIMELINE -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Timeline
+                        </h6>
+
+                        <p class="text-muted">
+                            {{ booking.timeline }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- REVISIONS -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold">
+                            Revisions Included
+                        </h6>
+
+                        <p class="text-muted">
+                            {{ booking.revisions_included }} revisions
+                        </p>
+
+                    </div>
+
+
+                    <!-- APPROVAL -->
+                    <div class="alert alert-warning rounded-3">
+
+                        <div class="d-flex">
+
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+                            <div class="small">
+                                By approving this proposal, you confirm that
+                                you accept the project price, deliverables,
+                                timeline and revision terms.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="d-grid">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg"
+                            >
+                                <i class="bi bi-check-circle me-2"></i>
+                                Approve Proposal
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

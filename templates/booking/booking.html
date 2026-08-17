@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %} Booking {% endblock %} - Premium Scope Management for Media Personal</title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}" />
+
+</head>
+
+<body>
+    <div class="container py-5" style="max-width: 1000px;">
+        <!-- Booking Request Form (multi-step) -->
+        <div class="glass-card" id="bookingWizard">
+
+            <!-- Progress -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between small muted mb-2">
+                    <span id="stepLabel">Step 1 of 6 — Client Information</span>
+                    <span id="stepPercent">17%</span>
+                </div>
+                <div class="progress thin">
+                    <div class="progress-bar" id="wizardProgressBar" style="width:17%"></div>
+                </div>
+            </div>
+
+            <!-- Step pills -->
+            <div class="d-flex flex-wrap gap-2 mb-4" id="stepPills">
+                <span class="pill step-pill active" data-step="1"><i class="bi bi-person-badge"></i> Client</span>
+                <span class="pill step-pill" data-step="2"><i class="bi bi-camera-reels"></i> Project</span>
+                <span class="pill step-pill" data-step="3"><i class="bi bi-camera-reels"></i> Coverage
+                    Requirement</span>
+                <span class="pill step-pill" data-step="4"><i class="bi bi-calendar2-week"></i> Schedule</span>
+                <span class="pill step-pill" data-step="5"><i class="bi bi-calendar2-week"></i> Venue</span>
+                <span class="pill step-pill" data-step="6"><i class="bi bi-file-earmark-play"></i> Deliverables</span>
+                <span class="pill step-pill" data-step="7"><i class="bi bi-cash-coin"></i> Payment</span>
+                <span class="pill step-pill" data-step="8"><i class="bi bi-cash-coin"></i> Additional Services</span>
+                <span class="pill step-pill" data-step="9"><i class="bi bi-cash-coin"></i> File Delivery</span>
+                <span class="pill step-pill" data-step="10"><i class="bi bi-check2-circle"></i> Additional Note</span>
+                <span class="pill step-pill" data-step="11"><i class="bi bi-check2-circle"></i> Review</span>
+            </div>
+
+            <form id="bookingForm" action="{% url 'media_library:booking_request' %}" class="row g-4" method="POST"
+                enctype="multipart/form-data">
+
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="alert alert-danger">
+
+                    <h6 class="mb-3">
+                        Please correct the following errors:
+                    </h6>
+
+                    <ul class="mb-0">
+
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <li>
+                            <strong>{{ field.label }}</strong>: {{ error }}
+                        </li>
+                        {% endfor %}
+                        {% endfor %}
+
+                        {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+                {% endif %}
+                <!-- ================= STEP 1: CLIENT INFORMATION ================= -->
+                <div class="col-12 wizard-step" data-step="1">
+                    <div class="glass-card feature-card">
+                        <div class="feature-icon bg-primary-soft">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+
+                        <h3>Client Information</h3>
+                        <p class="muted">
+                            Basic contact details and the type of project you need covered.
+                        </p>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.full_name }}
+                                    <label for="{{ form.full_name.id_for_label }}">
+                                        Full Name *
+                                    </label>
+                                </div>
+                                {% if form.full_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.full_name.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.email }}
+                                    <label for="{{ form.email.id_for_label }}">
+                                        Email Address *
+                                    </label>
+                                </div>
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.email.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.phone_number }}
+                                    <label for="{{ form.phone_number.id_for_label }}">
+                                        Phone Number *
+                                    </label>
+                                </div>
+                                {% if form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.phone_number.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.company }}
+                                    <label for="{{ form.company.id_for_label }}">
+                                        Company / Organization
+                                    </label>
+                                </div>
+                                {% if form.company.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.company.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    {{ form.project_type }}
+                                    <label for="{{ form.project_type.id_for_label }}">
+                                        Project Type *
+                                    </label>
+                                </div>
+                                {% if form.project_type.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.project_type.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-- ================= STEP 2: PROJECT DETAILS ================= -->
+
+                <div class="col-12 wizard-step d-none" data-step="2">
+
+                    <div class="glass-card feature-card">
+
+                        <div class="feature-icon bg-success-soft">
+                            <i class="bi bi-camera-reels"></i>
+                        </div>
+
+                        <h3>Project Details</h3>
+
+                        <p class="muted">
+                            Give us the shape of the project and your vision.
+                        </p>
+
+                        <div class="form-floating">
+
+                            {{ form.project_description }}
+
+                            <label for="{{ form.project_description.id_for_label }}">
+                                Tell us about your project
+                            </label>
+
+                        </div>
+
+                        {% if form.project_description.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.project_description.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+                <div class="col-12 wizard-step d-none" data-step="3">
+
+                    <div class="glass-card feature-card">
+
+                        <div class="feature-icon bg-info-soft">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+
+                        <h3>Coverage Requirements</h3>
+
+                        <p class="muted">
+                            What should be captured?
+                        </p>
+
+                        <div class="form-floating mb-4">
+
+                            {{ form.coverage_type }}
+
+                            <label for="{{ form.coverage_type.id_for_label }}">
+                                Preferred Coverage
+                            </label>
+
+                        </div>
+
+                        {% if form.coverage_type.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.coverage_type.errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Hidden until Highlight Video is selected -->
+                        <div id="highlightRequirementsWrap" class="highlight-reveal">
+
+                            <div class="highlight-reveal-inner">
+
+                                <hr>
+
+                                <h5 class="mb-4">
+                                    Highlight Requirements
+                                </h5>
+
+                                <div class="row g-3">
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_ceremony }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_ceremony.id_for_label }}">
+                                                Ceremony
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_speeches }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_speeches.id_for_label }}">
+                                                Speeches
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_performances }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_performances.id_for_label }}">
+                                                Performances
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_interviews }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_interviews.id_for_label }}">
+                                                Interviews
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_product_shots }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_product_shots.id_for_label }}">
+                                                Product Shots
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_drone_footage }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_drone_footage.id_for_label }}">
+                                                Drone Footage
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_behind_the_scenes }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_behind_the_scenes.id_for_label }}">
+                                                Behind the Scenes
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_guest_reactions }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_guest_reactions.id_for_label }}">
+                                                Guest Reactions
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_decoration }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_decoration.id_for_label }}">
+                                                Decoration
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_social_media_content }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_social_media_content.id_for_label }}">
+                                                Social Media Content
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_highlight_moments }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_highlight_moments.id_for_label }}">
+                                                Highlight Moments
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            {{ form.coverage_other }}
+                                            <label class="form-check-label"
+                                                for="{{ form.coverage_other.id_for_label }}">
+                                                Other
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="mt-4">
+
+                                    <div class="form-floating">
+
+                                        {{ form.special_requests }}
+
+                                        <label for="{{ form.special_requests.id_for_label }}">
+                                            Special Requests
+                                        </label>
+
+                                    </div>
+
+                                    {% if form.special_requests.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.special_requests.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <style>
+                    /* Collapsed/expanded reveal for the Highlight Requirements block */
+                    .highlight-reveal {
+                        max-height: 0;
+                        opacity: 0;
+                        overflow: hidden;
+                        transition: max-height 480ms cubic-bezier(0.4, 0, 0.2, 1),
+                            opacity 380ms ease,
+                            margin-top 380ms ease;
+                    }
+
+                    .highlight-reveal.show {
+                        max-height: 1400px;
+                        opacity: 1;
+                        margin-top: 0.25rem;
+                    }
+
+                    .highlight-reveal-inner {
+                        transform: translateY(-8px);
+                        transition: transform 420ms cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+
+                    .highlight-reveal.show .highlight-reveal-inner {
+                        transform: translateY(0);
+                    }
+
+                    /* Brief glow pulse to draw the eye when it appears */
+                    .highlight-reveal.show .highlight-reveal-inner {
+                        animation: highlightPulse 900ms ease-out;
+                    }
+
+                    @keyframes highlightPulse {
+                        0% {
+                            box-shadow: 0 0 0 0 var(--primary-soft);
+                            border-radius: var(--radius);
+                        }
+
+                        40% {
+                            box-shadow: 0 0 0 10px var(--primary-soft);
+                            border-radius: var(--radius);
+                        }
+
+                        100% {
+                            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+                            border-radius: var(--radius);
+                        }
+                    }
+                </style>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+
+                        // coverage_type is rendered with a hardcoded id="bcoverage"
+                        // (see forms.py Meta.widgets) — NOT id_for_label, since that's
+                        // overridden by the explicit id in the widget attrs.
+                        const coverageSelect = document.getElementById("bcoverage");
+                        const wrap = document.getElementById("highlightRequirementsWrap");
+
+                        if (!coverageSelect || !wrap) return;
+
+                        function toggleHighlightRequirements() {
+
+                            // coverage_type is a ForeignKey to CoverageType, so
+                            // coverageSelect.value is the row's primary key (e.g. "3"),
+                            // not a fixed string — it can't be matched directly.
+                            // Instead we match on the visible option text, which is
+                            // str(CoverageType instance), e.g. "Highlight Video".
+                            const selectedOption = coverageSelect.options[coverageSelect.selectedIndex];
+                            const label = selectedOption ? selectedOption.text.toLowerCase() : "";
+
+                            if (label.includes("highlight")) {
+                                wrap.classList.add("show");
+                            } else {
+                                wrap.classList.remove("show");
+                            }
+
+                        }
+
+                        coverageSelect.addEventListener("change", toggleHighlightRequirements);
+
+                        // Run once on load too, in case coverage_type is pre-selected
+                        // (e.g. editing an existing booking, or validation re-render).
+                        toggleHighlightRequirements();
+
+                    });
+                </script>
+
+
+
+                <!-- ================= STEP 4: EVENT SCHEDULE ================= -->
+
+                <div class="col-12 wizard-step d-none" data-step="4">
+
+                    <div class="glass-card feature-card">
+
+                        <div class="feature-icon bg-warning-soft">
+                            <i class="bi bi-calendar2-week"></i>
+                        </div>
+
+                        <h3>Event Schedule</h3>
+
+                        <p class="muted">
+                            When is your event taking place?
+                        </p>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    {{ form.event_date }}
+                                    <label for="{{ form.event_date.id_for_label }}">
+                                        Event Date *
+                                    </label>
+                                </div>
+                                {% if form.event_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.event_date.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    {{ form.start_time }}
+                                    <label for="{{ form.start_time.id_for_label }}">
+                                        Start Time *
+                                    </label>
+                                </div>
+                                {% if form.start_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.start_time.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    {{ form.end_time }}
+                                    <label for="{{ form.end_time.id_for_label }}">
+                                        End Time
+                                    </label>
+                                </div>
+                                {% if form.end_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.end_time.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.coverage_hours }}
+                                    <label for="{{ form.coverage_hours.id_for_label }}">
+                                        Estimated Coverage Hours
+                                    </label>
+                                </div>
+                                {% if form.coverage_hours.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.coverage_hours.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- ================= STEP 5: VENUE INFORMATION ================= -->
+
+                <div class="col-12 wizard-step d-none" data-step="5">
+
+                    <div class="glass-card feature-card">
+
+                        <div class="feature-icon bg-danger-soft">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+
+                        <h3>Venue Information</h3>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <div class="form-floating">
+                                    {{ form.venue_name }}
+                                    <label for="{{ form.venue_name.id_for_label }}">
+                                        Venue Name *
+                                    </label>
+                                </div>
+
+                                {% if form.venue_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.venue_name.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="form-floating">
+                                    {{ form.venue_address }}
+                                    <label for="{{ form.venue_address.id_for_label }}">
+                                        Venue Address *
+                                    </label>
+                                </div>
+
+                                {% if form.venue_address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.venue_address.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="form-floating">
+                                    {{ form.city }}
+                                    <label for="{{ form.city.id_for_label }}">
+                                        City
+                                    </label>
+                                </div>
+                                {% if form.city.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.city.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="form-floating">
+                                    {{ form.state }}
+                                    <label for="{{ form.state.id_for_label }}">
+                                        State
+                                    </label>
+                                </div>
+                                {% if form.state.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.state.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <div class="form-floating">
+                                    {{ form.country }}
+                                    <label for="{{ form.country.id_for_label }}">
+                                        Country
+                                    </label>
+                                </div>
+                                {% if form.country.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.country.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12">
+
+                                <div class="form-floating">
+                                    {{ form.maps_link }}
+                                    <label for="{{ form.maps_link.id_for_label }}">
+                                        Google Maps Link
+                                    </label>
+                                </div>
+                                {% if form.maps_link.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.maps_link.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ================= STEP 6: DELIVERABLES ================= -->
+
+                <div class="col-12 wizard-step d-none" data-step="6">`
+
+                    <div class="glass-card feature-card">
+
+                        <div class="feature-icon bg-success-soft">
+                            <i class="bi bi-file-earmark-play"></i>
+                        </div>
+
+                        <h3>Deliverables</h3>
+
+                        <p class="muted">
+                            Choose what you would like delivered.
+                        </p>
+
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_highlight_video }}
+                                    <label class="form-check-label">
+                                        Highlight Video
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_full_event_video }}
+                                    <label class="form-check-label">
+                                        Full Event Video
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_social_reels }}
+                                    <label class="form-check-label">
+                                        Social Media Reels
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_youtube_version }}
+                                    <label class="form-check-label">
+                                        YouTube Version
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_short_documentary }}
+                                    <label class="form-check-label">
+                                        Short Documentary
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_raw_footage }}
+                                    <label class="form-check-label">
+                                        Raw Footage
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_edited_photos }}
+                                    <label class="form-check-label">
+                                        Edited Photos
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.deliverable_promo_trailer }}
+                                    <label class="form-check-label">
+                                        Promotional Trailer
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="row g-3 mt-2">
+
+                            <div class="col-md-6">
+
+                                <div class="form-floating">
+                                    {{ form.final_length }}
+                                    <label for="{{ form.final_length.id_for_label }}">
+                                        Final Video Length
+                                    </label>
+                                </div>
+
+                                {% if form.final_length.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.final_length.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="form-floating">
+                                    {{ form.deadline }}
+                                    <label for="{{ form.deadline.id_for_label }}">
+                                        Delivery Deadline
+                                    </label>
+                                </div>
+
+                                {% if form.deadline.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.deadline.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= STEP 7: PAYMENT ================= -->
+
+                <div class="col-12 wizard-step d-none" data-step="7">
+
+                    <div class="glass-card feature-card">
+
+                        <div class="feature-icon bg-primary-soft">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+
+                        <h3>Budget & Payment</h3>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.budget }}
+                                    <label for="{{ form.budget.id_for_label }}">
+                                        Estimated Budget
+                                    </label>
+                                </div>
+                                {% if form.budget.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.budget.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.deposit }}
+                                    <label for="{{ form.deposit.id_for_label }}">
+                                        Deposit Percentage
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.payment_method }}
+                                    <label for="{{ form.payment_method.id_for_label }}">
+                                        Payment Method
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    {{ form.revision_round }}
+                                    <label for="{{ form.revision_round.id_for_label }}">
+                                        Revision Rounds
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- ================= STEP 8 ================= -->
+
+                <div class="col-12 wizard-step d-none" data-step="8">
+
+                    <div class="glass-card feature-card">
+
+                        <h3>Additional Services</h3>
+
+                        <div class="row">
+
+                            <div class="col-md-4">{{ form.drone_coverage }}
+                                <label for="{{ form.drone_coverage.id_for_label }}">
+                                    Drone Coverage
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.livestream }}
+                                <label for="{{ form.livestream.id_for_label }}">
+                                    Livestream
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.extra_camera_operator }}
+                                <label for="{{ form.extra_camera_operator.id_for_label }}">
+                                    Extra Camera Operator
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.photography }}
+                                <label for="{{ form.photography.id_for_label }}">
+                                    Photography
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.same_day_edit }}
+                                <label for="{{ form.same_day_edit.id_for_label }}">
+                                    Same Day Edit
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.teleprompter }}
+                                <label for="{{ form.teleprompter.id_for_label }}">
+                                    Teleprompter
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.lighting_setup }}
+                                <label for="{{ form.lighting_setup.id_for_label }}">
+                                    Lighting Setup
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.audio_recording }}
+                                <label for="{{ form.audio_recording.id_for_label }}">
+                                    Audio Recording
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.subtitle_captions }}
+                                <label for="{{ form.subtitle_captions.id_for_label }}">
+                                    Subtitle Captions
+                                </label>
+                            </div>
+
+                            <div class="col-md-4">{{ form.motion_graphics }}
+                                <label for="{{ form.motion_graphics.id_for_label }}">
+                                    Motion Graphics
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-12 wizard-step d-none" data-step="9">
+
+                    <div class="glass-card feature-card">
+
+                        <h3>File Delivery</h3>
+
+                        <div class="form-floating">
+
+                            {{ form.delivery_method }}
+
+                            <label for="{{ form.delivery_method.id_for_label }}">
+                                Preferred Delivery Method
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ================= STEP 6: REVIEW & TERMS ================= -->
+                <div class="col-12 wizard-step d-none" data-step="10">
+
+                    <div class="glass-card feature-card">
+
+                        <h3>Additional Notes</h3>
+
+                        <div class="form-floating">
+
+                            {{ form.additional_notes }}
+
+                            <label for="{{ form.additional_notes.id_for_label }}">
+                                Anything else?
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-12 wizard-step d-none" data-step="11">
+
+                    <div class="glass-card feature-card">
+
+                        <h3>Terms & Agreement</h3>
+
+                        <div class="form-check mb-3">
+
+                            {{ form.confirm_information }}
+
+                            <label class="form-check-label">
+                                I confirm that the information provided is accurate.
+                            </label>
+
+                        </div>
+
+                        <div class="form-check mb-3">
+
+                            {{ form.agree_booking_policy }}
+
+                            <label class="form-check-label">
+                                I agree to the booking policy.
+                            </label>
+
+                        </div>
+
+                        <div class="form-check mb-4">
+
+                            {{ form.confirm_deposit_policy }}
+
+                            <label class="form-check-label">
+                                I understand the deposit policy.
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Navigation -->
+                <div class="col-12 d-flex justify-content-between align-items-center mt-2">
+                    <button type="button" class="btn btn-outline-soft" id="wizardBackBtn" disabled>
+                        <i class="bi bi-arrow-left"></i> Back
+                    </button>
+                    <button type="button" class="btn btn-primary-soft" id="wizardNextBtn">
+                        Next <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-primary-soft d-none" id="wizardSubmitBtn">
+                        <i class="bi bi-calendar-check"></i> Request Booking
+                    </button>
+                </div>
+                <p class="muted small text-center mt-2 mb-0 w-100">We'll review your request and contact you within 24
+                    hours.</p>
+
+
+            </form>
+        </div>
+
+
+
+
+
+
+        {% if form.errors %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const firstError = document.querySelector(".is-invalid");
+
+                if (!firstError) return;
+
+                const step = firstError.closest(".wizard-step");
+
+                if (!step) return;
+
+                const stepNumber = Number(step.dataset.step);
+
+                current = stepNumber;
+                showStep(stepNumber);
+
+                firstError.focus();
+
+            });
+        </script>
+        {% endif %}
+
+
+        <script>
+            (function () {
+                const steps = Array.from(document.querySelectorAll('.wizard-step'));
+                const pills = Array.from(document.querySelectorAll('.step-pill'));
+                const backBtn = document.getElementById('wizardBackBtn');
+                const nextBtn = document.getElementById('wizardNextBtn');
+                const submitBtn = document.getElementById('wizardSubmitBtn');
+                const progressBar = document.getElementById('wizardProgressBar');
+                const stepLabel = document.getElementById('stepLabel');
+                const stepPercent = document.getElementById('stepPercent');
+                const stepNames = [
+                    'Client Information',
+                    'Project Details',
+                    'Coverage',
+                    'Schedule',
+                    'Venue',
+                    'Deliverables',
+                    'Payment',
+                    'Additional Services',
+                    'File Delivery',
+                    'Additional Notes',
+                    'Review & Terms'
+                ];
+                const total = steps.length;
+                let current = 1;
+
+                function showStep(n) {
+                    steps.forEach(s => s.classList.toggle('d-none', Number(s.dataset.step) !== n));
+                    pills.forEach(p => p.classList.toggle('active', Number(p.dataset.step) === n));
+                    backBtn.disabled = n === 1;
+                    nextBtn.classList.toggle('d-none', n === total);
+                    submitBtn.classList.toggle('d-none', n !== total);
+                    const pct = Math.round((n / total) * 100);
+                    progressBar.style.width = pct + '%';
+                    stepPercent.textContent = pct + '%';
+                    stepLabel.textContent = `Step ${n} of ${total} — ${stepNames[n - 1]}`;
+                    window.scrollTo({ top: document.getElementById('bookingWizard').offsetTop - 20, behavior: 'smooth' });
+                }
+
+                function validateStep(step) {
+
+                    const stepEl = document.querySelector(`[data-step="${step}"]`);
+
+                    let valid = true;
+
+                    stepEl.querySelectorAll("input, select, textarea").forEach(field => {
+
+                        field.classList.remove("is-invalid");
+
+                        if (field.hasAttribute("required") && !field.checkValidity()) {
+
+                            field.classList.add("is-invalid");
+
+                            valid = false;
+                        }
+
+                    });
+
+                    return valid;
+                }
+
+                nextBtn.addEventListener('click', () => {
+                    if (!validateStep(current)) return;
+                    if (current < total) { current++; showStep(current); }
+                });
+
+                backBtn.addEventListener('click', () => {
+                    if (current > 1) { current--; showStep(current); }
+                });
+
+                pills.forEach(pill => {
+                    pill.style.cursor = 'pointer';
+                    pill.addEventListener('click', () => {
+                        const target = Number(pill.dataset.step);
+                        if (target < current) { current = target; showStep(current); }
+                    });
+                });
+
+                document.getElementById('bookingForm').addEventListener('submit', function (e) {
+
+                    if (!validateStep(total)) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    // Allow the browser to submit normally to Django
+                });
+
+                showStep(current);
+            })();
+        </script>
+
+        <style>
+            /* Minimal additions strictly for step visibility/active pill state — everything else reuses existing classes */
+            .step-pill.active {
+                background: var(--primary-soft);
+                color: var(--accent);
+                border-color: var(--primary);
+            }
+        </style>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

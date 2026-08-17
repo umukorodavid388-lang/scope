@@ -1,0 +1,168 @@
+{% extends 'dashboard/frame.html' %}
+{% block title %} Edit Profile {% endblock %}
+{% block app_content %}
+<!-- CONTENT -->
+<main class="app-content" style="max-width:920px;">
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <div class="page-head">
+      <div>
+        <h2>Edit Profile</h2>
+        <p>Update your personal details. Changes save to your account immediately.</p>
+      </div>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger py-2 small">
+      {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- PHOTO -->
+    <div class="glass-card mb-3 fade-in visible">
+      <h3 style="font-size:1.05rem;">Profile Photo</h3>
+      <p class="muted small mb-4">Shown on your dashboard and on client-facing scope links.</p>
+      <div class="d-flex flex-wrap align-items-center gap-4">
+        <div class="avatar position-relative" id="avatarPreview"
+          style="width:90px;height:90px;font-size:1.9rem;flex-shrink:0;{% if user.profile_picture %}background-image:url('{{ user.profile_picture.url }}');background-size:cover;background-position:center;{% endif %}">
+          {% if not user.profile_picture %}{{ user.full_name|first|upper }}{% endif %}
+          <label for="{{ form.profile_picture.id_for_label }}" class="btn-icon-only position-absolute"
+            style="width:30px;height:30px;bottom:-4px;right:-4px;border-radius:50%;cursor:pointer;">
+            <i class="bi bi-camera small"></i>
+          </label>
+        </div>
+        <div>
+          <div class="d-flex gap-2 flex-wrap">
+            <label for="{{ form.profile_picture.id_for_label }}" class="btn btn-outline-soft mb-0" style="cursor:pointer;">
+              <i class="bi bi-upload me-2"></i>Upload New
+            </label>
+            {% if user.profile_picture %}
+            <button type="submit" name="remove_picture" value="1" class="btn btn-outline-soft">
+              <i class="bi bi-trash3 me-2"></i>Remove
+            </button>
+            {% endif %}
+          </div>
+          <div class="muted small mt-2">JPG, PNG or GIF. Recommended 400×400px, max 4MB.</div>
+          {{ form.profile_picture }}
+          {% if form.profile_picture.errors %}
+          <div class="small text-danger mt-1">{{ form.profile_picture.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- BASIC INFO -->
+    <div class="glass-card mb-3 fade-in visible delay-1">
+      <h3 style="font-size:1.05rem;">Basic Information</h3>
+      <p class="muted small mb-4">Your name and contact details.</p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small muted" for="{{ form.full_name.id_for_label }}">Full Name <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            {{ form.full_name }}
+          </div>
+          {% if form.full_name.errors %}
+          <div class="small text-danger mt-1">{{ form.full_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted" for="{{ form.username.id_for_label }}">Username <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            {{ form.username }}
+          </div>
+          {% if form.username.errors %}
+          <div class="small text-danger mt-1">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted" for="{{ form.email.id_for_label }}">Email Address <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            {{ form.email }}
+          </div>
+          {% if form.email.errors %}
+          <div class="small text-danger mt-1">{{ form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted" for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+            {{ form.phone_number }}
+          </div>
+          {% if form.phone_number.errors %}
+          <div class="small text-danger mt-1">{{ form.phone_number.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- REGIONAL (display only — no backing fields yet) -->
+    <div class="glass-card mb-3 fade-in visible delay-2">
+      <h3 style="font-size:1.05rem;">Regional Preferences</h3>
+      <p class="muted small mb-4">Controls how dates and currency display across your dashboard.</p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small muted">Timezone</label>
+          <select class="form-select" disabled>
+            <option>(GMT+1) West Africa Time — Lagos</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Date Format</label>
+          <select class="form-select" disabled>
+            <option>DD/MM/YYYY</option>
+          </select>
+        </div>
+      </div>
+      <p class="muted small mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Coming soon — not yet stored on your account.</p>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 pb-3 sticky-bottom"
+      style="background:linear-gradient(0deg, var(--bg) 60%, transparent); padding-top:10px;">
+      <a href="{% url 'profile' %}" class="btn btn-ghost"><i class="bi bi-x-lg me-2"></i>Cancel</a>
+      <button type="submit" class="btn btn-primary-soft"><i class="bi bi-check2 me-2"></i>Save Changes</button>
+    </div>
+  </form>
+
+  <!-- DANGER ZONE (deliberately outside the profile-edit form) -->
+  <div class="glass-card mb-3 fade-in visible delay-3" style="border-color:rgba(239,68,68,0.25);">
+    <h3 style="font-size:1.05rem; color:var(--danger);">Danger Zone</h3>
+    <p class="muted small mb-4">These actions are permanent and can't be undone.</p>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 p-3"
+      style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius);">
+      <div>
+        <div class="fw-semibold" style="color:var(--danger);">Delete Account</div>
+        <div class="muted small">Permanently remove your account, projects, and client data.</div>
+      </div>
+      <button type="button" class="btn" style="background:transparent; border:1px solid rgba(239,68,68,0.4); color:var(--danger);">
+        <i class="bi bi-trash3 me-2"></i>Delete Account
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<style>
+  #{{ form.profile_picture.id_for_label }} { display:none; }
+</style>
+<script>
+  document.getElementById("{{ form.profile_picture.id_for_label }}").addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (evt) {
+      const preview = document.getElementById("avatarPreview");
+      preview.style.backgroundImage = `url('${evt.target.result}')`;
+      preview.style.backgroundSize = "cover";
+      preview.style.backgroundPosition = "center";
+      preview.textContent = "";
+    };
+    reader.readAsDataURL(file);
+  });
+</script>
+{% endblock %}

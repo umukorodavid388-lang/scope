@@ -1,0 +1,94 @@
+{% extends "dashboard/frame.html" %}
+{% block title %}{% if is_edit %}Edit{% else %}Upload{% endif %} Media{% endblock %}
+
+{% block app_content %}
+<div class="container py-4" style="max-width: 640px;">
+  <h1 class="h3 fw-bold mb-4">{% if is_edit %}Edit "{{ item.title }}"{% else %}Upload media{% endif %}</h1>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      {{ form.description }}
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Category</label>
+        {{ form.category }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Project (optional)</label>
+        {{ form.project_reference }}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Media type</label>
+      {{ form.media_type }}
+    </div>
+
+    <div class="mb-3" data-field="photo">
+      <label class="form-label">Photo file</label>
+      {{ form.photo }}
+      {{ form.photo.errors }}
+    </div>
+
+    <div class="mb-3" data-field="video_file">
+      <label class="form-label">Video file</label>
+      {{ form.video_file }}
+      {{ form.video_file.errors }}
+    </div>
+
+    <div class="mb-3" data-field="video_embed">
+      <label class="form-label">YouTube / Vimeo URL</label>
+      {{ form.embed_url }}
+      {{ form.embed_url.errors }}
+    </div>
+
+    <div class="mb-3" data-field="video_file video_embed">
+      <label class="form-label">Thumbnail</label>
+      {{ form.thumbnail }}
+      {{ form.thumbnail.errors }}
+      <div class="form-text">Shown in the gallery grid before the video plays.</div>
+    </div>
+
+    <div class="form-check mb-2">
+      {{ form.is_public }}
+      <label class="form-check-label">Publish to public gallery</label>
+    </div>
+    <div class="form-check mb-4">
+      {{ form.is_featured }}
+      <label class="form-check-label">Feature this item</label>
+    </div>
+
+    <button type="submit" class="btn btn-dark">{% if is_edit %}Save changes{% else %}Upload{% endif %}</button>
+    <a href="{% url 'dashboard_list' %}" class="btn btn-link">Cancel</a>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const typeSelect = document.getElementById("id_media_type");
+  const fieldGroups = document.querySelectorAll("[data-field]");
+
+  function updateVisibleFields() {
+    const current = typeSelect.value;
+    fieldGroups.forEach(function (group) {
+      const types = group.dataset.field.split(" ");
+      group.style.display = types.includes(current) ? "" : "none";
+    });
+  }
+
+  typeSelect.addEventListener("change", updateVisibleFields);
+  updateVisibleFields();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends "dashboard/frame.html" %}
+{% block title %} Proposal {% endblock %}
+{% block app_content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Create Project Proposal</h2>
+            <p class="text-muted mb-0">
+                Prepare a proposal for {{ booking.full_name }}
+            </p>
+        </div>
+
+        <a href="{% url 'booking_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Bookings
+        </a>
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- CLIENT / BOOKING DETAILS -->
+        <div class="col-lg-5">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-1">
+                        <i class="bi bi-person-circle me-2"></i>
+                        Booking Details
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        Information submitted by the client
+                    </p>
+                </div>
+
+                <div class="card-body px-4 pb-4">
+
+                    <div class="mb-3">
+                        <label class="text-muted small">
+                            Client Name
+                        </label>
+
+                        <div class="fw-semibold">
+                            {{ booking.full_name }}
+                        </div>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="text-muted small">
+                            Email
+                        </label>
+
+                        <div>
+                            {{ booking.email }}
+                        </div>
+                    </div>
+
+
+                    {% if booking.phone_number %}
+                    <div class="mb-3">
+                        <label class="text-muted small">
+                            Phone
+                        </label>
+
+                        <div>
+                            {{ booking.phone_number }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if booking.project_type %}
+                    <div class="mb-3">
+                        <label class="text-muted small">
+                            Event Type
+                        </label>
+
+                        <div>
+                            {{ booking.project_type }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="text-muted small">
+                            Event Date
+                        </label>
+
+                        <div>
+                            {{ booking.event_date }}
+                        </div>
+                    </div>
+
+                    {% if booking.budget %}
+                    <div class="mb-3">
+                        <label class="text-muted small">Budget Reference</label>
+                        <div class="fw-semibold text-success" style="font-size: 1.1rem;">
+                            ₦{{ booking.budget|default:"—" }}
+                        </div>
+                        <small class="text-muted d-block mt-1">Try to stay close to this amount for best
+                            acceptance</small>
+                    </div>
+                    {% else %}
+                    <div class="mb-3 text-muted small">
+                        <label>Budget Reference</label>
+                        <div>Client didn't specify budget</div>
+                    </div>
+                    {% endif %}
+                    {% if booking.project_description %}
+                    <div class="mb-3">
+                        <label class="text-muted small">
+                            Client Description
+                        </label>
+
+                        <div class="bg-light text-dark rounded-3 p-3">
+                            {{ booking.project_description }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- PROPOSAL FORM -->
+        <div class="col-lg-7">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="card border-0 shadow-sm rounded-4">
+
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h5 class="fw-bold mb-1">
+                            <i class="bi bi-file-earmark-text me-2"></i>
+                            Proposal Details
+                        </h5>
+
+                        <p class="text-muted small mb-0">
+                            These details will be sent to the client.
+                        </p>
+                    </div>
+
+
+                    <div class="card-body px-4 pb-4">
+
+                        <!-- PRICE -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Proposed Price
+                            </label>
+
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    ₦
+                                </span>
+
+                                <input type="number" name="proposed_price" class="form-control"
+                                    placeholder="e.g. 250000" min="0" step="0.01" required>
+                            </div>
+
+                            <div class="form-text">
+                                Enter the total amount for the project.
+                            </div>
+
+                        </div>
+
+
+                        <!-- PROPOSAL DESCRIPTION -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Proposal Description
+                            </label>
+
+                            <textarea name="proposal_description" class="form-control" rows="5"
+                                placeholder="Describe the project, creative approach, services and what the client can expect..."
+                                required></textarea>
+
+                        </div>
+
+
+                        <!-- DELIVERABLES -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Deliverables
+                            </label>
+
+                            <textarea name="deliverables" class="form-control" rows="5" placeholder="Example:
+• Full event video
+• Highlight video
+• 100 edited photographs
+• Social media clips
+• 4K final delivery" required></textarea>
+
+                            <div class="form-text">
+                                List everything included in the package.
+                            </div>
+
+                        </div>
+
+
+                        <!-- TIMELINE -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Production Timeline
+                            </label>
+
+                            <textarea name="timeline" class="form-control" rows="3"
+                                placeholder="Example: Final edited photos delivered within 7 days. Highlight video delivered within 14 days."
+                                required></textarea>
+
+                        </div>
+
+
+                        <!-- REVISIONS -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Revisions Included
+                            </label>
+
+                            <input type="number" name="revisions_included" class="form-control" value="2" min="0"
+                                max="20">
+
+                            <div class="form-text">
+                                Number of revisions included in the project price.
+                            </div>
+
+                        </div>
+
+
+                        <!-- NOTICE -->
+                        <div class="alert alert-info rounded-3">
+
+                            <div class="d-flex">
+
+                                <i class="bi bi-info-circle-fill me-2"></i>
+
+                                <div>
+                                    <strong>Before sending</strong>
+
+                                    <p class="mb-0 small">
+                                        Review the price, deliverables and timeline carefully.
+                                        Once submitted, the client will receive this proposal by email.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- BUTTONS -->
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a href="{% url 'booking_list' %}" class="btn btn-light px-4">
+                                Cancel
+                            </a>
+
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-send me-1"></i>
+                                Send Proposal
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

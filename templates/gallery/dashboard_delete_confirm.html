@@ -1,0 +1,14 @@
+{% extends "dashboard/frame.html" %}
+{% block title %}Delete Media{% endblock %}
+
+{% block app_content %}
+<div class="container py-5" style="max-width: 480px;">
+  <h1 class="h4 fw-bold">Delete "{{ item.title }}"?</h1>
+  <p class="text-muted">This can't be undone. The file will be removed from storage.</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete it</button>
+    <a href="{% url 'dashboard_list' %}" class="btn btn-link">Cancel</a>
+  </form>
+</div>
+{% endblock %}

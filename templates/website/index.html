@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% block title %} Scope Agreement {% endblock %}
+{% load static %}
+{% block content %}
+<!-- Hero -->
+<header class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="pill fade-in"><i class="bi bi-stars"></i> {{ content.hero_pill_text }}</span>
+        <h1 class="hero-title fade-in delay-1">{{ content.hero_title }}</h1>
+        <p class="hero-sub fade-in delay-2">{{ content.hero_subtitle }}</p>
+        <div class="hero-actions fade-in delay-3">
+          <a href="{% url 'media_library:booking_request' %}" class="btn btn-primary-soft btn-lg">
+            <i class="bi bi-rocket-takeoff"></i> Get Started
+          </a>
+        </div>
+        <div class="hero-stats fade-in delay-4">
+          <div><strong>{{ hero_client_count }}</strong><span>Clients</span></div>
+          <div><strong>{{ hero_scopes_signed }}</strong><span>Scopes signed</span></div>
+          <div><strong>{{ hero_avg_rating }}</strong><span>Avg. rating</span></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="hero-card-stack fade-in delay-2">
+          {% if showcase_list %}
+          {% for item in showcase_list %}
+          <div class="glass-card stack-card stack-card-{{ forloop.counter }}">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="muted small">Active Project</div>
+                <div class="fw-semibold">{{ item.project.name }} — {{ item.project.client.name }}</div>
+              </div>
+              <span class="badge bg-success-soft">{{ item.status_label }}</span>
+            </div>
+            <div class="mt-3">
+              <div class="d-flex justify-content-between small muted"><span>Completion</span><span>{{
+                  item.project.progress }}%</span></div>
+              <div class="progress thin">
+                <div class="progress-bar" style="width:{{ item.project.progress }}%"></div>
+              </div>
+            </div>
+            <div class="mt-3 d-flex justify-content-between small">
+              <span><i class="bi bi-arrow-repeat"></i> {{ item.project.revisions_included }} revisions included</span>
+              <span><i class="bi bi-calendar3"></i>
+                {% if item.days_left > 0 %}Due in {{ item.days_left }} day{{ item.days_left|pluralize }}
+                {% elif item.days_left == 0 %}Due today
+                {% else %}Overdue by {{ item.days_overdue }} day{{ item.days_overdue|pluralize }}{% endif %}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+          {% else %}
+          <div class="glass-card stack-card stack-card-1">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="muted small">{{ content.showcase_project_label }}</div>
+                <div class="fw-semibold">{{ content.showcase_project_name }}</div>
+              </div>
+              <span class="badge bg-success-soft">{{ content.showcase_status_label }}</span>
+            </div>
+            <div class="mt-3">
+              <div class="d-flex justify-content-between small muted"><span>Completion</span><span>{{
+                  content.showcase_completion_percent }}%</span></div>
+              <div class="progress thin">
+                <div class="progress-bar" style="width:{{ content.showcase_completion_percent }}%"></div>
+              </div>
+            </div>
+            <div class="mt-3 d-flex justify-content-between small">
+              <span><i class="bi bi-arrow-repeat"></i> {{ content.showcase_revisions_used }} / {{
+                content.showcase_revisions_total }} revisions</span>
+              <span><i class="bi bi-calendar3"></i> {{ content.showcase_due_text }}</span>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="#about" class="scroll-hint" aria-label="Scroll"><span></span></a>
+</header>
+
+<style>
+  /* Original template only ever used stack-card-1 (single card). Cards
+     2/3 are pulled out of normal flow with position:absolute, offset
+     up/left behind the front card, for a tight fanned "stack of cards"
+     look. Absolute positioning is used deliberately instead of negative
+     margins — if your base.html's .hero-card-stack uses flexbox with a
+     `gap`, margins alone can't close that gap, but taking cards 2/3 out
+     of flow entirely sidesteps it regardless of the parent's layout. */
+  .hero-card-stack {
+    position: relative;
+    display: block !important;
+    gap: 0 !important;
+  }
+
+  .hero-card-stack .stack-card {
+    width: 100%;
+  }
+
+  .hero-card-stack .stack-card-1 {
+    position: relative;
+    z-index: 3;
+  }
+
+  .hero-card-stack .stack-card-2 {
+    position: absolute;
+    top: 155px;
+    left: 12px;
+    transform: scale(0.97);
+    opacity: 0.85;
+    z-index: 2;
+  }
+</style>
+
+
+
+<!-- About -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5">
+        <div class="glass-card portfolio-image">
+          <video controls width="640" height="560" loop autoplay muted playsinline
+            poster="{% if content.about_video_poster %}{{ content.about_video_poster.url }}{% else %}{% static 'static/img/TDP_8613 (2).jpg' %}{% endif %}"
+            class="img-fluid rounded">
+            {% if content.about_video_url %}
+            <source src="{{ content.about_video_url }}" type="video/mp4">
+            {% elif content.about_video %}
+            <source src="{{ content.about_video.url }}" type="video/mp4">
+            {% else %}
+            <source src="{% static 'static/img/Recording 2026-01-01 085316.mp4' %}" type="video/mp4">
+            {% endif %}
+          </video>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <span class="eyebrow">About</span>
+        <h2>{{ content.about_heading }}</h2>
+        <p class="muted">{{ content.about_paragraph_1 }}</p>
+        <p class="muted">{{ content.about_paragraph_2 }}</p>
+        <div class="hero-stats">
+          <div><strong>{{ hero_client_count }}</strong><span>Clients</span></div>
+          <div><strong>{{ hero_scopes_signed }}</strong><span>Scopes signed</span></div>
+          <div><strong>{{ hero_avg_rating }}</strong><span>Avg. rating</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="section section-alt" id="services">
+  <div class="container">
+    <div class="section-head text-center mx-auto">
+      <span class="eyebrow">Services</span>
+      <h2>{{ content.services_heading }}</h2>
+      <p class="muted">{{ content.services_paragraph }}</p>
+    </div>
+    <div class="row g-4">
+      {% for service in services %}
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card feature-card fade-in">
+          <div class="feature-icon {{ service.icon_bg }}"><i class="bi {{ service.icon_class }}"></i></div>
+          <h3>{{ service.title }}</h3>
+          <p class="muted">{{ service.description }}</p>
+        </div>
+      </div>
+      {% empty %}
+      <p class="muted text-center">Services coming soon.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+<!-- Testimonials -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head text-center mx-auto">
+      <span class="eyebrow">Loved by creators</span>
+      <h2>{{ content.testimonials_heading }}</h2>
+    </div>
+    <div class="row g-4">
+      {% for t in testimonials %}
+      <div class="col-md-4">
+        <div class="glass-card testimonial">
+          <div class="stars">
+            {% for _ in t.stars_range %}<i class="bi bi-star-fill"></i>{% endfor %}
+          </div>
+          <p>"{{ t.quote }}"</p>
+          <div class="author"><span class="avatar">{{ t.avatar_letter }}</span>
+            <div><strong>{{ t.author_name }}</strong><span class="muted small">{{ t.author_role }}</span></div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="muted text-center">No testimonials yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5">
+        <span class="eyebrow">Contact</span>
+        <h2>{{ content.contact_heading }}</h2>
+        <p class="muted">{{ content.contact_paragraph }}</p>
+        <ul class="contact-list">
+          <li><i class="bi bi-envelope"></i> {{ content.contact_email }}</li>
+          <li><i class="bi bi-telephone"></i> {{ content.contact_phone }}</li>
+          <li><i class="bi bi-geo-alt"></i> {{ content.contact_locations }}</li>
+        </ul>
+      </div>
+      <div class="col-lg-7">
+        <div class="glass-card">
+          <form id="contactForm" class="row g-3" novalidate>
+            {% csrf_token %}
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="cName" placeholder="Name" required />
+                <label for="cName">Your name</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="email" class="form-control" id="cEmail" placeholder="Email" required />
+                <label for="cEmail">Email address</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea class="form-control" id="cMsg" placeholder="Message" style="height:120px" required></textarea>
+                <label for="cMsg">How can we help?</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-primary-soft" type="submit"><i class="bi bi-send"></i> Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'JS/form.js' %}"></script>
+{% endblock %}

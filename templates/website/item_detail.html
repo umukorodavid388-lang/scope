@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <a href="{% url 'media_library:gallery' %}" class="d-inline-block mb-4 text-decoration-none">&larr; Back to gallery</a>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      {% if item.media_type == "photo" %}
+        <img src="{{ item.photo.url }}" alt="{{ item.title }}" class="img-fluid rounded w-100">
+      {% elif item.media_type == "video_file" %}
+        <video src="{{ item.video_file.url }}" controls class="w-100 rounded"></video>
+      {% elif item.media_type == "video_embed" %}
+        <div class="ratio ratio-16x9">
+          <iframe src="{{ item.embed_src }}" allowfullscreen class="rounded"></iframe>
+        </div>
+      {% endif %}
+    </div>
+    <div class="col-lg-4">
+      <h1 class="h3 fw-bold">{{ item.title }}</h1>
+      {% if item.category %}<p class="text-muted">{{ item.category.name }}</p>{% endif %}
+      {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+    </div>
+  </div>
+
+  {% if related %}
+    <h2 class="h5 fw-bold mt-5 mb-3">More like this</h2>
+    <div class="row g-3">
+      {% for r in related %}
+        <div class="col-6 col-md-3">
+          <a href="{{ r.get_absolute_url }}" class="text-decoration-none">
+            <img src="{{ r.display_thumbnail_url }}" class="img-fluid rounded" style="aspect-ratio:4/3;object-fit:cover;">
+            <p class="small mt-1 text-body text-truncate">{{ r.title }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

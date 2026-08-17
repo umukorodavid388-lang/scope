@@ -1,0 +1,225 @@
+{% extends 'dashboard/frame.html' %}
+{% block title %} Calendar {% endblock %}
+{% block app_content %}
+<main class="app-content">
+
+  <!-- Page Header -->
+  <div class="page-head">
+    <div>
+      <h2>Project Calendar</h2>
+      <p>{{ month_label }} - Track all deadlines</p>
+    </div>
+    <div class="page-actions">
+      <!-- Month Navigation -->
+      <a href="?month={{ prev_month }}&year={{ prev_year }}" class="btn btn-outline-soft" title="Previous month">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+      <a href="?month={{ today.month }}&year={{ today.year }}" class="btn btn-outline-soft">Today</a>
+      <a href="?month={{ next_month }}&year={{ next_year }}" class="btn btn-outline-soft" title="Next month">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="glass-card">
+        <div class="text-muted small mb-2">Projects This Month</div>
+        <div class="fw-bold" style="font-size:1.5rem;color:#0d6efd;">{{ projects_this_month }}</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="glass-card">
+        <div class="text-muted small mb-2">Due Soon (7 days)</div>
+        <div class="fw-bold" style="font-size:1.5rem;color:#dc3545;">{{ due_soon }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Card -->
+  <div class="glass-card">
+    <!-- Calendar Grid -->
+    <div class="cal-grid">
+      <!-- Day of Week Headers -->
+      <div class="cal-dow">Sun</div>
+      <div class="cal-dow">Mon</div>
+      <div class="cal-dow">Tue</div>
+      <div class="cal-dow">Wed</div>
+      <div class="cal-dow">Thu</div>
+      <div class="cal-dow">Fri</div>
+      <div class="cal-dow">Sat</div>
+
+      <!-- Empty cells for days before month starts -->
+      {% for _ in leading_blanks %}
+      <div class="cal-empty"></div>
+      {% endfor %}
+
+      <!-- Days with projects -->
+      {% for d in days %}
+      <div class="cal-day {% if d.is_today %}today{% endif %} {% if d.project %}has-event{% endif %}" data-date="{{ d.date }}">
+        <span class="cal-num">{{ d.day }}</span>
+        {% if d.project %}
+        <!-- ✅ FIXED: Use Django URL tag instead of hardcoded path -->
+        <a href="{% url 'task_detail' d.project.id %}" class="cal-event">
+          <i class="bi bi-circle-fill"></i>
+          <span class="event-name">{{ d.project.name }}</span>
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="row g-3 mt-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="d-flex align-items-center gap-2">
+        <div style="width:20px;height:20px;border:2px solid var(--primary);border-radius:6px;background:var(--primary-soft);"></div>
+        <span class="text-muted small">Today</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="d-flex align-items-center gap-2">
+        <div style="width:20px;height:20px;border:2px solid var(--accent);border-radius:6px;"><i class="bi bi-circle-fill" style="font-size:0.6rem;color:var(--accent);"></i></div>
+        <span class="text-muted small">Has Project</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Styles -->
+<style>
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 1rem 0;
+  }
+
+  .cal-dow {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cal-empty {
+    min-height: 100px;
+    background: transparent;
+  }
+
+  .cal-day {
+    min-height: 100px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    background: var(--surface);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cal-day:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .cal-day.today {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary-soft), rgba(13, 110, 253, 0.05));
+    border-width: 2px;
+  }
+
+  .cal-day.has-event {
+    border-color: var(--accent);
+  }
+
+  .cal-day.has-event:hover {
+    border-color: var(--accent);
+    background: rgba(220, 53, 69, 0.05);
+  }
+
+  .cal-num {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .cal-event {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .cal-event:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .cal-event i {
+    font-size: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .event-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .cal-day {
+      min-height: 70px;
+      padding: 6px;
+    }
+
+    .cal-num {
+      font-size: 0.8rem;
+    }
+
+    .cal-event {
+      display: none;
+    }
+
+    .cal-grid {
+      gap: 4px;
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .cal-day {
+      min-height: 50px;
+      padding: 4px;
+      font-size: 0.8rem;
+    }
+
+    .cal-num {
+      font-size: 0.7rem;
+    }
+
+    .cal-grid {
+      gap: 2px;
+    }
+  }
+</style>
+
+{% endblock %}

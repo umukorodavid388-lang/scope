@@ -1,0 +1,87 @@
+{% extends 'auth/base.html' %}
+{% block title %}Booking Received{% endblock %}
+
+{% block content %}
+<div id="auth" class="auth-wrap">
+    <div class="auth-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="auth-card glass-card" style="max-width:560px;">
+
+        <div class="text-center mb-4">
+            <a class="navbar-brand justify-content-center" href="{% url 'media_library:landing' %}">
+                <span class="brand-mark"><i class="bi bi-camera-reels"></i></span>
+                <span class="brand-name">Scope Agreement</span>
+            </a>
+        </div>
+
+        <div class="text-center mb-4">
+            <div class="mx-auto d-flex align-items-center justify-content-center"
+                style="width:76px;height:76px;border-radius:50%;background:rgba(34,197,94,0.14);">
+                <i class="bi bi-check-lg" style="font-size:2.1rem;color:var(--success);"></i>
+            </div>
+        </div>
+
+        <h2 class="auth-title">Booking request received</h2>
+        <p class="muted text-center mb-4">
+            Thanks, {{ booking.full_name }} — we've got your request for
+            <strong class="text-soft">{{ booking.get_project_type_display }}</strong> coverage
+            on <strong class="text-soft">{{ booking.event_date|date:"F j, Y" }}</strong>.
+            We'll review the details and reach out within 24 hours.
+        </p>
+
+        <div class="scope-info mb-4">
+            <div class="scope-info-item">
+                <div class="label">Reference</div>
+                <div class="value">#{{ booking.pk|stringformat:"05d" }}</div>
+            </div>
+            <div class="scope-info-item">
+                <div class="label">Event Date</div>
+                <div class="value">{{ booking.event_date|date:"M j, Y" }}</div>
+            </div>
+            <div class="scope-info-item">
+                <div class="label">Venue</div>
+                <div class="value">{{ booking.venue_name|default:"—" }}</div>
+            </div>
+            <div class="scope-info-item">
+                <div class="label">Status</div>
+                <div class="value">
+                    {% if booking.status == 'approved' %}
+                    <span class="status-badge status-Completed">{{ booking.get_status_display }}</span>
+                    {% elif booking.status == 'rejected' %}
+                    <span class="status-badge status-Overdue">{{ booking.get_status_display }}</span>
+                    {% else %}
+                    <span class="status-badge status-Planning">{{ booking.get_status_display }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <ul class="contact-list mb-4">
+            <li><i class="bi bi-envelope-check"></i>A confirmation has been sent to {{ booking.email }}</li>
+            <li><i class="bi bi-telephone"></i>We may reach you at {{ booking.phone_number }} to confirm details</li>
+            <li><i class="bi bi-cash-coin"></i>Your spot is confirmed once the deposit is received</li>
+        </ul>
+
+        <div class="d-grid gap-2">
+            <a href="{% url 'media_library:landing' %}" class="btn btn-primary-soft">
+                <i class="bi bi-house me-2"></i>Back to Home
+            </a>
+            <a href="{% url 'media_library:booking_request' %}" class="btn btn-outline-soft">
+                <i class="bi bi-plus-circle me-2"></i>Submit Another Booking
+            </a>
+        </div>
+
+        <p class="text-center mt-4 small muted">
+            Questions before then? <a href="mailto:hello@scopeagreement.app">Email us</a>
+        </p>
+    </div>
+</div>
+{% endblock %} 
+
+
+

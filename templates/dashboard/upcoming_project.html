@@ -1,0 +1,188 @@
+{% extends 'dashboard/frame.html' %}
+{% block title %} Upcoming Project {% endblock %}
+{% block app_content %}
+<main class="app-content">
+
+  <div class="page-head">
+    <div>
+      <h2>Upcoming Projects</h2>
+      <p>All projects sorted by deadline</p>
+    </div>
+    <div class="page-actions">
+      <a href="{% url 'calender' %}" class="btn btn-outline-soft">
+        <i class="bi bi-calendar3"></i> View Calendar
+      </a>
+    </div>
+  </div>
+
+  <!-- Total Count -->
+  <div class="mb-4">
+    <p class="text-muted">You have <strong>{{ total_upcoming }}</strong> upcoming projects</p>
+  </div>
+
+  <!-- Due Today -->
+  {% if due_today %}
+  <div class="mb-4">
+    <h3 style="font-size:1.1rem;margin-bottom:1rem;">🔴 Due Today</h3>
+    <div class="row g-3">
+      {% for project in due_today %}
+      <div class="col-12">
+        <div class="glass-card">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <h5 class="mb-2">{{ project.name }}</h5>
+              <p class="text-muted small mb-2">{{ project.description }}</p>
+              
+              <div class="d-flex gap-3 flex-wrap">
+                <small class="text-muted">
+                  <i class="bi bi-person"></i> {{ project.client.name }}
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-calendar"></i> {{ project.deadline|date:"d M" }} (TODAY!)
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-percent"></i> {{ project.progress }}%
+                </small>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="progress mt-2" style="height:4px;">
+                <div class="progress-bar bg-danger" role="progressbar" style="width:{{ project.progress }}%" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="text-end">
+              <div class="fw-bold text-danger" style="font-size:1.2rem;">₦{{ project.price|floatformat:0 }}</div>
+              <span class="badge bg-danger mt-2">{{ project.get_status_display }}</span>
+              <a href="{% url 'project_detail' project.id %}" class="btn btn-sm btn-outline-danger mt-2">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Due This Week -->
+  {% if due_this_week %}
+  <div class="mb-4">
+    <h3 style="font-size:1.1rem;margin-bottom:1rem;">🟡 Due This Week</h3>
+    <div class="row g-3">
+      {% for project in due_this_week %}
+      <div class="col-12">
+        <div class="glass-card">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <h5 class="mb-2">{{ project.name }}</h5>
+              <p class="text-muted small mb-2">{{ project.description }}</p>
+              
+              <div class="d-flex gap-3 flex-wrap">
+                <small class="text-muted">
+                  <i class="bi bi-person"></i> {{ project.client.name }}
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-calendar"></i> {{ project.deadline|date:"d M Y" }} (in {{ project.days_until }} days)
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-percent"></i> {{ project.progress }}%
+                </small>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="progress mt-2" style="height:4px;">
+                <div class="progress-bar bg-warning" role="progressbar" style="width:{{ project.progress }}%" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="text-end">
+              <div class="fw-bold text-warning" style="font-size:1.2rem;">₦{{ project.price|floatformat:0 }}</div>
+              <span class="badge bg-warning mt-2">{{ project.get_status_display }}</span>
+              <a href="{% url 'project_detail' project.id %}" class="btn btn-sm btn-outline-warning mt-2">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Due Later -->
+  {% if due_later %}
+  <div class="mb-4">
+    <h3 style="font-size:1.1rem;margin-bottom:1rem;">🟢 Due Later</h3>
+    <div class="row g-3">
+      {% for project in due_later %}
+      <div class="col-12">
+        <div class="glass-card">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <h5 class="mb-2">{{ project.name }}</h5>
+              <p class="text-muted small mb-2">{{ project.description }}</p>
+              
+              <div class="d-flex gap-3 flex-wrap">
+                <small class="text-muted">
+                  <i class="bi bi-person"></i> {{ project.client.name }}
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-calendar"></i> {{ project.deadline|date:"d M Y" }}
+                </small>
+                <small class="text-muted">
+                  <i class="bi bi-percent"></i> {{ project.progress }}%
+                </small>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="progress mt-2" style="height:4px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width:{{ project.progress }}%" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="text-end">
+              <div class="fw-bold text-success" style="font-size:1.2rem;">₦{{ project.price|floatformat:0 }}</div>
+              <span class="badge bg-success mt-2">{{ project.get_status_display }}</span>
+              <a href="{% url 'task_detail' project.id %}" class="btn btn-sm btn-outline-success mt-2">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Empty State -->
+  {% if not due_today and not due_this_week and not due_later %}
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No upcoming projects. Great job! 🎉
+  </div>
+  {% endif %}
+
+</main>
+
+<style>
+  .glass-card {
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn {
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  .badge {
+    font-weight: 500;
+  }
+
+  .progress {
+    background-color: #e9ecef;
+  }
+</style>
+
+{% endblock %}

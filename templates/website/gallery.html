@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Gallarey{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 8rem; padding-bottom: 2rem;">
+  <div class="text-center mb-5">
+    <h1 class="fw-bold">Media Library</h1>
+    <p class="text-muted">A look at recent shoots, edits, and highlights.</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+    <a href="?{% if active_type %}type={{ active_type }}{% endif %}"
+       class="btn btn-sm {% if not active_category %}btn-dark{% else %}btn-outline-dark{% endif %}">All</a>
+    {% for cat in categories %}
+      <a href="?category={{ cat.slug }}{% if active_type %}&type={{ active_type }}{% endif %}"
+         class="btn btn-sm {% if active_category == cat.slug %}btn-dark{% else %}btn-outline-dark{% endif %}">
+        {{ cat.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
+    <a href="?{% if active_category %}category={{ active_category }}{% endif %}"
+       class="btn btn-sm {% if not active_type %}btn-secondary{% else %}btn-outline-secondary{% endif %}">All types</a>
+    <a href="?type=photo{% if active_category %}&category={{ active_category }}{% endif %}"
+       class="btn btn-sm {% if active_type == 'photo' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">Photos</a>
+    <a href="?type=video{% if active_category %}&category={{ active_category }}{% endif %}"
+       class="btn btn-sm {% if active_type == 'video' %}btn-secondary{% else %}btn-outline-secondary{% endif %}">Videos</a>
+  </div>
+
+  <!-- Grid -->
+  <div class="row g-3">
+    {% for item in page_obj %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="#" class="text-decoration-none media-item"
+           data-bs-toggle="modal" data-bs-target="#mediaModal"
+           data-title="{{ item.title }}"
+           data-type="{{ item.media_type }}"
+           data-embed-src="{{ item.embed_src }}"
+           data-video-file="{% if item.video_file %}{{ item.video_file.url }}{% endif %}"
+           data-photo="{% if item.photo %}{{ item.photo.url }}{% endif %}"
+           data-description="{{ item.description|default:'' }}">
+          <div class="position-relative rounded overflow-hidden shadow-sm" style="aspect-ratio: 4/3;">
+            {% if item.display_thumbnail_url %}
+              <img src="{{ item.display_thumbnail_url }}" alt="{{ item.title }}"
+                   class="w-100 h-100" style="object-fit: cover;">
+            {% else %}
+              <div class="w-100 h-100 bg-secondary-subtle"></div>
+            {% endif %}
+            {% if item.is_video %}
+              <span class="position-absolute top-50 start-50 translate-middle text-white fs-2">▶</span>
+            {% endif %}
+            {% if item.is_featured %}
+              <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Featured</span>
+            {% endif %}
+          </div>
+          <p class="mt-2 mb-0 text-body small fw-semibold text-truncate">{{ item.title }}</p>
+          {% if item.category %}<p class="text-muted small">{{ item.category.name }}</p>{% endif %}
+        </a>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted py-5">No media published yet — check back soon.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    <nav class="mt-5">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_type %}&type={{ active_type }}{% endif %}">Previous</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_type %}&type={{ active_type }}{% endif %}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+
+
+
+
+
+<!-- Lightbox modal -->
+<div class="modal fade" id="mediaModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="mediaModalTitle"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center" id="mediaModalBody"></div>
+      <div class="modal-footer border-0">
+        <p class="text-white-50 small mb-0" id="mediaModalDescription"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("mediaModal");
+  modal.addEventListener("show.bs.modal", function (event) {
+    const trigger = event.relatedTarget;
+    const type = trigger.dataset.type;
+    const body = document.getElementById("mediaModalBody");
+    document.getElementById("mediaModalTitle").textContent = trigger.dataset.title || "";
+    document.getElementById("mediaModalDescription").textContent = trigger.dataset.description || "";
+
+    body.innerHTML = "";
+    if (type === "photo") {
+      const img = document.createElement("img");
+      img.src = trigger.dataset.photo;
+      img.className = "img-fluid rounded";
+      body.appendChild(img);
+    } else if (type === "video_file") {
+      const video = document.createElement("video");
+      video.src = trigger.dataset.videoFile;
+      video.controls = true;
+      video.autoplay = true;
+      video.className = "w-100 rounded";
+      body.appendChild(video);
+    } else if (type === "video_embed") {
+      const src = trigger.dataset.embedSrc;
+      const iframe = document.createElement("iframe");
+      iframe.src = src ? `${src}?autoplay=1` : "";
+      iframe.className = "w-100 rounded";
+      iframe.style.aspectRatio = "16/9";
+      iframe.setAttribute("allow", "autoplay; fullscreen");
+      iframe.setAttribute("allowfullscreen", "");
+      body.appendChild(iframe);
+    }
+  });
+  modal.addEventListener("hide.bs.modal", function () {
+    document.getElementById("mediaModalBody").innerHTML = "";
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'dashboard/frame.html' %}
+{% block title %} Profile {% endblock %} 
+{% block app_content %}
+
+<!-- CONTENT -->
+<main class="app-content">
+
+  <div class="page-head">
+    <div>
+      <h2>Profile</h2>
+      <p>Manage your personal details, business info, and account preferences.</p>
+    </div>
+  </div>
+
+  <!-- PROFILE HERO -->
+  <div class="glass-card d-flex flex-wrap align-items-center gap-4 mb-4 fade-in visible">
+    <div class="avatar position-relative"
+      style="width:88px;height:88px;font-size:1.8rem;flex-shrink:0;{% if user.profile_picture %}background-image:url('{{ user.profile_picture.url }}');background-size:cover;background-position:center;{% endif %}">
+      {% if not user.profile_picture %}{{ user.full_name|first|upper }}{% endif %}
+      <a href="{% url 'edit_profile' user.pk %}" class="btn-icon-only position-absolute"
+        style="width:30px;height:30px;bottom:-4px;right:-4px;border-radius:50%;">
+        <i class="bi bi-camera small"></i>
+      </a>
+    </div>
+    <div class="flex-grow-1" style="min-width:220px;">
+      <h3 class="mb-1" style="font-size:1.35rem;">{{ user.full_name }}</h3>
+      <div class="muted mb-2">{{ user.role|default:"Freelance Videographer" }} · Owner, Scope Agreement</div>
+      <div class="d-flex flex-wrap gap-3 small text-soft">
+        <span class="muted"><i class="bi bi-envelope me-1"></i>{{ user.email }}</span>
+        {% if user.phone_number %}
+        <span class="muted"><i class="bi bi-telephone me-1"></i>{{ user.phone_number }}</span>
+        {% endif %}
+        <span class="muted"><i class="bi bi-calendar3 me-1"></i>Member since {{ user.date_joined|date:"M Y" }}</span>
+      </div>
+    </div>
+    <a href="{% url 'edit_profile' user.pk %}" class="btn btn-outline-soft"><i class="bi bi-pencil me-2"></i>Edit Profile</a>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="glass-card stat-card fade-in visible delay-1">
+        <div class="stat-icon bg-primary-soft"><i class="bi bi-folder-check"></i></div>
+        <div class="stat-label">Projects Completed</div>
+        <div class="stat-value">{{ projects_completed_count|default:0 }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="glass-card stat-card accent-success fade-in visible delay-2">
+        <div class="stat-icon bg-success-soft"><i class="bi bi-people"></i></div>
+        <div class="stat-label">Active Clients</div>
+        <div class="stat-value">{{ active_clients_count|default:0 }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="glass-card stat-card accent-info fade-in visible delay-3">
+        <div class="stat-icon bg-info-soft"><i class="bi bi-star"></i></div>
+        <div class="stat-label">Client Rating</div>
+        <div class="stat-value">{{ client_rating|default:"—" }}</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="glass-card stat-card accent-warning fade-in visible delay-4">
+        <div class="stat-icon bg-warning-soft"><i class="bi bi-clock-history"></i></div>
+        <div class="stat-label">Avg. Response Time</div>
+        <div class="stat-value">{{ avg_response_time|default:"—" }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <ul class="nav mb-4" id="profileTabs" style="border-bottom:1px solid var(--border); gap:4px;">
+    <li class="nav-item">
+      <button class="nav-link active tab-btn" data-tab="personal"
+        style="color:var(--accent); border:none; border-bottom:2px solid var(--accent); border-radius:0; font-weight:600;">
+        <i class="bi bi-person me-2"></i>Personal Info
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link tab-btn" data-tab="business"
+        style="color:var(--muted); border:none; border-bottom:2px solid transparent; border-radius:0; font-weight:600;">
+        <i class="bi bi-briefcase me-2"></i>Business Details
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link tab-btn" data-tab="notifications"
+        style="color:var(--muted); border:none; border-bottom:2px solid transparent; border-radius:0; font-weight:600;">
+        <i class="bi bi-bell me-2"></i>Notifications
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link tab-btn" data-tab="security"
+        style="color:var(--muted); border:none; border-bottom:2px solid transparent; border-radius:0; font-weight:600;">
+        <i class="bi bi-shield-check me-2"></i>Security
+      </button>
+    </li>
+  </ul>
+
+  <!-- PERSONAL (read-only — actual edits happen on the Edit Profile page) -->
+  <div class="tab-panel" id="panel-personal">
+    <div class="glass-card mb-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h3 style="font-size:1.05rem;">Personal Information</h3>
+          <p class="muted small mb-4">This is how you appear across Scope Agreement.</p>
+        </div>
+        <a href="{% url 'edit_profile' user.pk %}" class="btn btn-outline-soft btn-sm">
+          <i class="bi bi-pencil me-1"></i>Edit
+        </a>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small muted">Full Name</label>
+          <input type="text" class="form-control" value="{{ user.full_name }}" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Email Address</label>
+          <input type="email" class="form-control" value="{{ user.email }}" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Phone Number</label>
+          <input type="tel" class="form-control" value="{{ user.phone_number }}" placeholder="Not set" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Username</label>
+          <input type="text" class="form-control" value="{{ user.username }}" placeholder="Not set" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS (static placeholder — no backing model fields yet) -->
+  <div class="tab-panel d-none" id="business">
+    <div class="glass-card mb-3">
+      <h3 style="font-size:1.05rem;">Business Details</h3>
+      <p class="muted small mb-4">Used on scope documents and client-facing links.</p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small muted">Business Name</label>
+          <input type="text" class="form-control" placeholder="e.g. Umeh Films" disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Service Type</label>
+          <select class="form-select" disabled>
+            <option>Videography</option>
+            <option>Photography</option>
+            <option>Videography + Photography</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Default Currency</label>
+          <select class="form-select" disabled>
+            <option>NGN (₦)</option>
+            <option>USD ($)</option>
+            <option>GBP (£)</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Extra Revision Rate</label>
+          <input type="text" class="form-control" placeholder="e.g. ₦15,000 per round" disabled>
+        </div>
+        <div class="col-12">
+          <label class="form-label small muted">Default Terms Note</label>
+          <textarea class="form-control" rows="3" disabled>Includes 2 rounds of revisions. Additional rounds billed at the rate above.</textarea>
+        </div>
+      </div>
+      <p class="muted small mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Coming soon — not yet stored on your account.</p>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS (static placeholder) -->
+  <div class="tab-panel d-none" id="panel-notifications">
+    <div class="glass-card mb-3">
+      <h3 style="font-size:1.05rem;">Notification Preferences</h3>
+      <p class="muted small mb-4">Choose what you want to be notified about.</p>
+
+      <div class="d-flex justify-content-between align-items-center py-3"
+        style="border-bottom:1px solid var(--border);">
+        <div>
+          <div class="fw-semibold">New revision requests</div>
+          <div class="muted small">Get notified when a client requests a change</div>
+        </div>
+        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked disabled
+            style="width:2.5em;height:1.4em;"></div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center py-3"
+        style="border-bottom:1px solid var(--border);">
+        <div>
+          <div class="fw-semibold">Project deadlines</div>
+          <div class="muted small">Reminders as delivery dates approach</div>
+        </div>
+        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked disabled
+            style="width:2.5em;height:1.4em;"></div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center py-3"
+        style="border-bottom:1px solid var(--border);">
+        <div>
+          <div class="fw-semibold">New client bookings</div>
+          <div class="muted small">Alerts when a new booking form is submitted</div>
+        </div>
+        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked disabled
+            style="width:2.5em;height:1.4em;"></div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center py-3">
+        <div>
+          <div class="fw-semibold">Marketing &amp; product updates</div>
+          <div class="muted small">Occasional news about Scope Agreement</div>
+        </div>
+        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" disabled
+            style="width:2.5em;height:1.4em;"></div>
+      </div>
+      <p class="muted small mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Coming soon — not yet stored on your account.</p>
+    </div>
+  </div>
+
+  <!-- SECURITY -->
+  <div class="tab-panel d-none" id="panel-security">
+    <div class="glass-card mb-3">
+      <h3 style="font-size:1.05rem;">Password</h3>
+      <p class="muted small mb-4">Update the password used to sign in.</p>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small muted">Current Password</label>
+          <input type="password" class="form-control" placeholder="••••••••" disabled>
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+          <label class="form-label small muted">New Password</label>
+          <input type="password" class="form-control" placeholder="••••••••" disabled>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small muted">Confirm New Password</label>
+          <input type="password" class="form-control" placeholder="••••••••" disabled>
+        </div>
+      </div>
+      <p class="muted small mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Coming soon — password change isn't wired up yet.</p>
+    </div>
+    <div class="glass-card">
+      <h3 style="font-size:1.05rem;">Two-Factor Authentication</h3>
+      <p class="muted small mb-3">Add an extra layer of security to your account.</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="fw-semibold">Enable 2FA</div>
+          <div class="muted small">Currently disabled</div>
+        </div>
+        <div class="form-check form-switch"><input class="form-check-input" type="checkbox" disabled
+            style="width:2.5em;height:1.4em;"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+{% endblock %}

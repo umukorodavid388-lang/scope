@@ -1,0 +1,34 @@
+{% extends 'dashboard/frame.html' %}
+{% block title %} Settings {% endblock %}
+{% block app_content %}
+<div class="page-head">
+    <div><h2>Settings</h2><p>Manage your studio preferences and profile.</p></div>
+</div>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="glass-card">
+            <h3 class="mb-3">Profile</h3>
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-12"><div class="form-floating"><input type="text" class="form-control" name="full_name" value="Ade Ogunleye" /><label>Full Name</label></div></div>
+                <div class="col-12"><div class="form-floating"><input type="email" class="form-control" name="email" value="ade@scopeagreement.app" /><label>Email</label></div></div>
+                <div class="col-12"><div class="form-floating"><input type="text" class="form-control" name="studio_name" value="Lumen Studio" /><label>Studio Name</label></div></div>
+                <div class="col-12"><button class="btn btn-primary-soft" type="submit"><i class="bi bi-check2"></i> Save Changes</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="glass-card">
+            <h3 class="mb-3">Preferences</h3>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color: var(--border) !important">
+                <div><div class="fw-semibold">Dark Mode</div><div class="muted small">Switch between dark and light themes</div></div>
+                <button class="btn btn-outline-soft btn-sm" id="setThemeBtn"><i class="bi bi-moon-stars"></i> Toggle</button>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2">
+                <div><div class="fw-semibold">Auto-bill Extra Revisions</div><div class="muted small">Charge clients for extra rounds</div></div>
+                <div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked /></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

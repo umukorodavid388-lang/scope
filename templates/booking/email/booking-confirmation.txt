@@ -1,0 +1,13 @@
+Hi {{ booking.full_name }},
+
+We've received your booking request for {{ booking.get_project_type_display }} coverage on {{ booking.event_date|date:"F j, Y" }}.
+
+Reference: #{{ booking.pk|stringformat:"05d" }}
+Venue: {{ booking.venue_name|default:"—" }}
+Status: {{ booking.get_status_display }}
+
+We'll review the details and get back to you within 24 hours. Your booking is confirmed once the required deposit is received.
+
+If anything above looks wrong, just reply to this email and let us know.
+
+— Scope Agreement

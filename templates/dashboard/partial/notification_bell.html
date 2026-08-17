@@ -1,0 +1,53 @@
+<div class="dropdown">
+    <button class="btn btn-icon-only position-relative" id="notifBtn" aria-label="Notifications"
+        data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell"></i>
+        {% if pending_bookings_count > 0 %}
+        <span class="dot-badge bg-danger"></span>
+        {% endif %}
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-end p-0" style="width:340px; max-height:440px; overflow-y:auto;"
+        aria-labelledby="notifBtn">
+
+        <div class="d-flex justify-content-between align-items-center px-3 py-2"
+            style="border-bottom:1px solid var(--border);">
+            <span class="fw-semibold small">Notifications</span>
+            {% if pending_bookings_count > 0 %}
+            <span class="badge bg-primary-soft">{{ pending_bookings_count }} new</span>
+            {% endif %}
+        </div>
+
+        {% for booking in recent_pending_bookings %}
+        <a class="dropdown-item d-flex gap-2 align-items-start py-2 px-3"
+            href="{% url 'booking_detail' booking.pk %}">
+            <span class="avatar" style="width:32px;height:32px;font-size:0.8rem;flex-shrink:0;">
+                {{ booking.full_name|first|upper }}
+            </span>
+            <span class="d-block">
+                <span class="d-block fw-semibold small text-truncate" style="max-width:230px;">
+                    New booking request from {{ booking.full_name }}
+                </span>
+                <span class="d-block muted small">
+                    {{ booking.get_project_type_display }} · {{ booking.event_date|date:"M j, Y" }}
+                </span>
+                <span class="d-block muted" style="font-size:0.72rem;">
+                    {{ booking.created_at|timesince }} ago
+                </span>
+            </span>
+        </a>
+        {% empty %}
+        <div class="px-3 py-4 text-center muted small">
+            <i class="bi bi-bell-slash d-block mb-2" style="font-size:1.4rem;"></i>
+            No new booking requests.
+        </div>
+        {% endfor %}
+
+        {% if pending_bookings_count > 0 %}
+        <a href="{% url 'booking_list' %}?status=pending" class="dropdown-item text-center small fw-semibold"
+            style="border-top:1px solid var(--border);">
+            View all pending requests
+        </a>
+        {% endif %}
+    </div>
+</div>
